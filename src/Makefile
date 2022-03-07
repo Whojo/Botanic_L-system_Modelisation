@@ -10,10 +10,6 @@ CC = g++
 CORE_CPP_FILES = core/l_system.cpp core/rule.cpp
 CORE_OBJ_FILES = $(CORE_CPP_FILES:.cpp=.o)
 
-# TODO find better
-TREE2D_CPP_FILES = drawer2D.cpp
-TREE2D_OBJ_FILES = $(TREE2D_CPP_FILES:.cpp=.o)
-
 CXX_FLAGS += -Wall -Wextra -O3 -g -std=c++17
 CXX_FLAGS += -lm
 CXX_FLAGS += -m64 -march=native
@@ -22,8 +18,6 @@ CXX_FLAGS += -fopt-info-vec-optimized #-fopt-info-vec-missed -ftree-vectorize
 OPENCV = `pkg-config opencv4 --cflags --libs`
 LIBS = $(OPENCV)
 
-tree2D:
-	$(CC) tree2D.cpp drawer2D.cpp -o tree2D $(LIBS)
 
 #For gcc 4.9
 #CXXFLAGS+=-fdiagnostics-color=auto
@@ -40,7 +34,7 @@ define default_color
 endef
 
 
-all: main-build
+all: main
 
 pre-build:
 	@$(call color,4)
@@ -54,10 +48,15 @@ post-build:
 	@$(call default_color)
 	@exit $$sta
 
-main-build: pre-build build post-build
+main: pre-build build-main post-build
 
-build: $(CORE_OBJ_FILES)
+build-main: $(CORE_OBJ_FILES)
 	$(CC) main.cpp -o lsys $(CORE_OBJ_FILES) $(CXX_FLAGS)
+
+tree2D: pre-build build-tree2D post-build
+
+build-tree2D: $(CORE_OBJ_FILES)
+	$(CC) tree2D.cpp drawer2D.cpp -o tree2D $(CORE_OBJ_FILES) $(CXX_FLAGS) $(LIBS)
 
 %.o: %.cpp %.hpp
 	@$(call color,2)
@@ -76,9 +75,7 @@ build: $(CORE_OBJ_FILES)
 	fi ;\
 	exit $$sta
 
-.PHONY: all clean pre-build post-build main-build build
-
-
+.PHONY: all clean pre-build post-build build-main main tree2D build-tree2D
 
 clean:
 	rm -f lsys tree2D
