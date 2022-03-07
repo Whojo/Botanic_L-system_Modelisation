@@ -15,6 +15,12 @@ CXX_FLAGS += -lm
 CXX_FLAGS += -m64 -march=native
 CXX_FLAGS += -fopt-info-vec-optimized #-fopt-info-vec-missed -ftree-vectorize
 
+OPENCV = `pkg-config opencv4 --cflags --libs`
+LIBS = $(OPENCV)
+
+toto:
+	$(CC) opencv_test.cpp -o test $(LIBS)
+
 #For gcc 4.9
 #CXXFLAGS+=-fdiagnostics-color=auto
 export GCC_COLORS=1
@@ -67,6 +73,8 @@ build: $(OBJ_FILES)
 	exit $$sta
 
 .PHONY: all clean pre-build post-build main-build build
+
+
 
 clean:
 	rm -f lsys
