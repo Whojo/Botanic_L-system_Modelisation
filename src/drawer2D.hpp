@@ -13,13 +13,13 @@ struct State
 public:
     double angle;
     int length;
-    cv::Point position;
+    cv::Point2d position;
 };
 
 class Drawer
 {
 public:
-    Drawer(int height, int width, cv::Point start, int length);
+    Drawer(int height, int width, cv::Point2d start, int length);
 
     // Draw a line based on the current state of the Drawer
     // The state is updated

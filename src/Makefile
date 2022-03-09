@@ -77,7 +77,7 @@ build-tree2D: $(CORE_OBJ_FILES)
 .PHONY: all clean pre-build post-build build-main main tree2D build-tree2D
 
 clean:
-	rm -f lsys tree2D
+	rm -f lsys bin_tree2D
 	rm -f $(CORE_OBJ_FILES) main.o
 
 # end

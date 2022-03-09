@@ -36,6 +36,9 @@ void turtle(Drawer &drawer, std::string sentence, double angle)
                 if (!drawer.pop_state())
                     std::cerr << "Empty pop" << std::endl;
                 break;
+            default:
+              const auto error_msg = "Letters not handle by drawer: ";
+              std::cerr << error_msg + c << std::endl;
         }
     }
 }
@@ -121,9 +124,9 @@ int main()
   //   drawer = Drawer(height, width, starting, length);
     std::string axiom_e = "X";
     std::vector<core::Rule> productions_e = {
-    core::Rule{ 'X', "F[+X][-X]FX"},
-    core::Rule{ 'F', "FF"},
-  };
+      core::Rule{ 'X', "F[+X][-X]FX"},
+      core::Rule{ 'F', "FF"},
+    };
 
     core::LSystem lsys_e{ axiom_e, productions_e };
 

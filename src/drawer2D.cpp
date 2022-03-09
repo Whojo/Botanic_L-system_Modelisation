@@ -2,14 +2,14 @@
 
 #include "opencv2/highgui.hpp"
 
-Drawer::Drawer(int height, int width, cv::Point start, int length)
+Drawer::Drawer(int height, int width, cv::Point2d start, int length)
 {
     window = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
     state = State{ pi/2, length, start };
 }
 void Drawer::draw_line(cv::Scalar color, int thickness)
 {
-    cv::Point dest(state.position.x + state.length * cos(state.angle),
+    cv::Point2d dest(state.position.x + state.length * cos(state.angle),
                    state.position.y - state.length * sin(state.angle));
     cv::line(window, state.position, dest, color, thickness);
     state.position = dest;
@@ -21,8 +21,8 @@ void Drawer::draw_line()
 void Drawer::space()
 {
     state.position =
-        cv::Point(state.position.x + state.length * cos(state.angle),
-                  state.position.y - state.length * sin(state.angle));
+        cv::Point2d(state.position.x + state.length * cos(state.angle),
+                    state.position.y - state.length * sin(state.angle));
 }
 
 // void Drawer::set_state(double angle, int length, cv::Point position)
