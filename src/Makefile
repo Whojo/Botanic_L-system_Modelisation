@@ -18,7 +18,6 @@ CXX_FLAGS += -fopt-info-vec-optimized #-fopt-info-vec-missed -ftree-vectorize
 OPENCV = `pkg-config opencv4 --cflags --libs`
 LIBS = $(OPENCV)
 
-
 #For gcc 4.9
 #CXXFLAGS+=-fdiagnostics-color=auto
 export GCC_COLORS=1
@@ -56,7 +55,7 @@ build-main: $(CORE_OBJ_FILES)
 tree2D: pre-build build-tree2D post-build
 
 build-tree2D: $(CORE_OBJ_FILES)
-	$(CC) tree2D.cpp drawer2D.cpp -o tree2D $(CORE_OBJ_FILES) $(CXX_FLAGS) $(LIBS)
+	$(CC) tree2D.cpp drawer2D.cpp -o bin_tree2D $(CORE_OBJ_FILES) $(CXX_FLAGS) $(LIBS)
 
 %.o: %.cpp %.hpp
 	@$(call color,2)

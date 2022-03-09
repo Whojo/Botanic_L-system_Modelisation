@@ -5,7 +5,8 @@
 #include <deque>
 #include <optional>
 
-const double pi = acos(-1);
+//const double pi = acos(-1);
+const double pi = M_PI;
 
 struct State
 {

@@ -14,9 +14,13 @@ namespace core
         {
             std::string next_state;
             for (const auto &c : state)
+            {
+                std::string next_successor(1, c);
                 for (const auto &rule : productions_)
                     if (rule.get_predecessor() == c)
-                        next_state += rule.get_successor();
+                        next_successor = rule.get_successor();
+                next_state += next_successor;
+            }    
             state = next_state;
         }
 

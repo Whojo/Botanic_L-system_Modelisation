@@ -42,7 +42,7 @@ void Drawer::set_length(int length)
 
 void Drawer::push_state()
 {
-    stack.push_front(state);
+    stack.push_front(State{state.angle, state.length, state.position});
 }
 bool Drawer::pop_state()
 {
