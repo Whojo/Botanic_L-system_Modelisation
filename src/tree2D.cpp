@@ -1,27 +1,26 @@
 #include <cstddef>
 #include <iostream>
 #include <cmath>
+#include <functional>
 #include "drawer2D.hpp"
 
 #include "core/l_system.hpp"
 
 using namespace cv; 
 
-void turtle(Drawer &drawer, std::string sentence, double angle)
+using Palette = std::function<Scalar(char)>;
+
+
+void turtle(Drawer &drawer, std::string sentence, double angle,
+            Palette palette = [](const char) -> Scalar { return {0, 0, 0};},
+            const int thickness = 2)
 {
     for (size_t i = 0; i < sentence.length(); i++)
     {
         char c = sentence[i];
         switch(c)
         {
-            case 'F':
-                drawer.draw_line();
-                break;
-            case 'L':
-                drawer.draw_line();
-                break;
-            case 'R':
-                drawer.draw_line();
+            case 'X':
                 break;
             case '+':
                 drawer.add_angle(angle);
@@ -37,8 +36,7 @@ void turtle(Drawer &drawer, std::string sentence, double angle)
                     std::cerr << "Empty pop" << std::endl;
                 break;
             default:
-              const auto error_msg = "Letters not handle by drawer: ";
-              std::cerr << error_msg + c << std::endl;
+                drawer.draw_line(palette(c), thickness);
         }
     }
 }
@@ -80,7 +78,7 @@ int main()
 
   //   auto generated_b = lsys_b.generate(5);
 
-  //   double pi9 = pi / 9; // 20°
+    double pi9 = pi / 9; // 20°
   //   turtle(drawer, generated_b, pi7);
   //   drawer.write_img("example/b_example.png");
 
@@ -105,34 +103,40 @@ int main()
   //   
   //   /* ----------------- */
 
-  //   drawer = Drawer(height, width, starting, length);
-  //   std::string axiom_d = "X";
-  //   std::vector<core::Rule> productions_d = {
-  //   core::Rule{ 'X', "F[+X]F[-X]+X"},
-  //   core::Rule{ 'F', "FF"},
-  // };
+    // drawer = Drawer(height, width, starting, length);
+    std::string axiom_d = "X";
+    std::vector<core::Rule> productions_d = {
+    core::Rule{ 'X', "H[+X]H[-X]+X"},
+    core::Rule{ 'F', "FF"},
+    core::Rule{ 'H', "FF"},
+  };
 
-  //   core::LSystem lsys_d{ axiom_d, productions_d };
+    core::LSystem lsys_d{ axiom_d, productions_d };
 
-  //   auto generated_d = lsys_d.generate(7);
+    auto generated_d = lsys_d.generate(7);
 
-  //   turtle(drawer, generated_d, pi9);
-  //   drawer.write_img("example/d_example.png");
+    Palette palette_d = [](const char c) -> Scalar {
+      if (c == 'H')
+        return {28,116,72}; // Green
+      return {12,47,55}; // Brown
+    };
+    turtle(drawer, generated_d, pi9, palette_d);
+    drawer.write_img("example/d_example.png");
 
   //   /* ----------------- */
 
-  //   drawer = Drawer(height, width, starting, length);
+    drawer = Drawer(height, width, starting, length);
     std::string axiom_e = "X";
     std::vector<core::Rule> productions_e = {
-      core::Rule{ 'X', "F[+X][-X]FX"},
+      core::Rule{ 'X', "H[+X][-X]HX"},
+      core::Rule{ 'H', "FF"},
       core::Rule{ 'F', "FF"},
     };
 
     core::LSystem lsys_e{ axiom_e, productions_e };
 
     auto generated_e = lsys_e.generate(7);
-
-    turtle(drawer, generated_e, pi7);
+    turtle(drawer, generated_e, pi7, palette_d);
     drawer.write_img("example/e_example.png");
 
     /* ----------------- */

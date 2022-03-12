@@ -12,8 +12,8 @@ CORE_OBJ_FILES = $(CORE_CPP_FILES:.cpp=.o)
 
 CXX_FLAGS += -Wall -Wextra -O3 -g -std=c++17
 CXX_FLAGS += -lm
-CXX_FLAGS += -m64 -march=native
-CXX_FLAGS += -fopt-info-vec-optimized #-fopt-info-vec-missed -ftree-vectorize
+# CXX_FLAGS += -m64 -march=native
+# CXX_FLAGS += -fopt-info-vec-optimized #-fopt-info-vec-missed -ftree-vectorize
 
 OPENCV = `pkg-config opencv4 --cflags --libs`
 LIBS = $(OPENCV)
