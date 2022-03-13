@@ -13,26 +13,23 @@ struct State
 {
 public:
     double angle;
-    int length;
     cv::Point2d position;
 };
 
 class Drawer
 {
 public:
-    Drawer(const std::string background_img, cv::Point2d start, int length);
-    Drawer(int height, int width, cv::Point2d start, int length);
+    Drawer(const std::string background_img, cv::Point2d start);
+    Drawer(int height, int width, cv::Point2d start);
 
     // Draw a line based on the current state of the Drawer
     // The state is updated
-    void draw_line(cv::Scalar color, int thickness);
-    void draw_line();
+    void draw_line(cv::Scalar color, int thickness, double length);
+    void draw_line(int thickness = 2, double length = 1);
     // Only update the state
-    void space();
+    void space(double length);
 
-    //void set_state(double angle, int length, cv::Point position); Useless
     void add_angle(double angle);
-    void set_length(int length);
 
     void push_state();
     bool pop_state();

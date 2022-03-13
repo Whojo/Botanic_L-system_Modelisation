@@ -3,54 +3,49 @@
 #include "opencv2/highgui.hpp"
 
 
-Drawer::Drawer(const std::string background_img, cv::Point2d start, int length)
+Drawer::Drawer(const std::string background_img, cv::Point2d start)
 {
     auto img = imread(background_img, cv::IMREAD_COLOR);
     window = cv::Mat(img);
-    state = State{ pi/2, length, start };
+    state = State{ pi/2, start };
 }
-Drawer::Drawer(int height, int width, cv::Point2d start, int length)
+
+Drawer::Drawer(int height, int width, cv::Point2d start)
 {
     window = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
-    state = State{ pi/2, length, start };
+    state = State{ pi/2, start };
 }
-void Drawer::draw_line(cv::Scalar color, int thickness)
+
+void Drawer::draw_line(cv::Scalar color, int thickness, double length)
 {
-    cv::Point2d dest(state.position.x + state.length * cos(state.angle),
-                   state.position.y - state.length * sin(state.angle));
+    cv::Point2d dest(state.position.x + length * cos(state.angle),
+                     state.position.y - length * sin(state.angle));
     cv::line(window, state.position, dest, color, thickness);
     state.position = dest;
 }
-void Drawer::draw_line()
+
+void Drawer::draw_line(int thickness, double length)
 {
-    draw_line(cv::Scalar(0, 0, 0), 2);
-}
-void Drawer::space()
-{
-    state.position =
-        cv::Point2d(state.position.x + state.length * cos(state.angle),
-                    state.position.y - state.length * sin(state.angle));
+    draw_line(cv::Scalar(0, 0, 0), thickness, length);
 }
 
-// void Drawer::set_state(double angle, int length, cv::Point position)
-// {
-//     state.angle = angle;
-//     state.length = length;
-//     state.position = position;
-// }
+void Drawer::space(double length)
+{
+    state.position =
+        cv::Point2d(state.position.x + length * cos(state.angle),
+                    state.position.y - length * sin(state.angle));
+}
+
 void Drawer::add_angle(double angle)
 {
     state.angle += angle;
 }
-void Drawer::set_length(int length)
-{
-    state.length = length;
-}
 
 void Drawer::push_state()
 {
-    stack.push_front(State{state.angle, state.length, state.position});
+    stack.push_front(State{state.angle, state.position});
 }
+
 bool Drawer::pop_state()
 {
     if (!stack.empty())
@@ -70,10 +65,12 @@ void Drawer::show_window(std::string window_name)
     cv::waitKey(0);
     cv::destroyAllWindows();
 }
+
 void Drawer::show_window()
 {
     show_window("");
 }
+
 void Drawer::write_img(std::string filename)
 {
     imwrite(filename, window);

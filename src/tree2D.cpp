@@ -12,6 +12,7 @@ using Palette = std::function<Scalar(char)>;
 
 
 void turtle(Drawer &drawer, std::string sentence, double angle,
+            double length,
             Palette palette = [](const char) -> Scalar { return {0, 0, 0};},
             const int thickness = 2)
 {
@@ -36,7 +37,7 @@ void turtle(Drawer &drawer, std::string sentence, double angle,
                     std::cerr << "Empty pop" << std::endl;
                 break;
             default:
-                drawer.draw_line(palette(c), thickness);
+                drawer.draw_line(palette(c), thickness, length);
         }
     }
 }
@@ -51,7 +52,7 @@ int main()
 
     int length = 4;
     // length = 20;
-    Drawer drawer = Drawer(height, width, starting, length);
+    Drawer drawer = Drawer(height, width, starting);
 
 
   //   std::string axiom_a = "F";
@@ -64,11 +65,11 @@ int main()
   //   auto generated_a = lsys_a.generate(5);
 
     double pi7 = pi / 7; // 25,7°
-  //   turtle(drawer, generated_a, pi7);
+  //   turtle(drawer, generated_a, pi7, length);
   //   drawer.write_img("example/a_example.png");
 
   //   /* ----------------- */
-  //   drawer = Drawer(height, width, starting, length);
+  //   drawer = Drawer(height, width, starting);
   //   std::string axiom_b = "F";
   //   std::vector<core::Rule> productions_b = {
   //   core::Rule{ 'F', "F[+F]F[-F][F]"},
@@ -79,11 +80,11 @@ int main()
   //   auto generated_b = lsys_b.generate(5);
 
     double pi9 = pi / 9; // 20°
-  //   turtle(drawer, generated_b, pi7);
+  //   turtle(drawer, generated_b, pi7, length);
   //   drawer.write_img("example/b_example.png");
 
   //   /* ----------------- */
-  //   drawer = Drawer(height, width, starting, length);
+  //   drawer = Drawer(height, width, starting);
   //   std::string axiom_c = "F";
   //   std::vector<core::Rule> productions_c = {
   //   core::Rule{ 'F', "FF-[-F+F+F]+[+F-F-F]"},
@@ -94,7 +95,7 @@ int main()
   //   auto generated_c = lsys_c.generate(4);
 
     double pi8 = pi / 8; // 22.5°
-  //   turtle(drawer, generated_c, pi7);
+  //   turtle(drawer, generated_c, pi7, length);
   //   drawer.write_img("example/c_example.png");
 
   //   /* ----------------- */
@@ -103,7 +104,7 @@ int main()
   //   
   //   /* ----------------- */
 
-    // drawer = Drawer(height, width, starting, length);
+    // drawer = Drawer(height, width, starting);
     std::string axiom_d = "X";
     std::vector<core::Rule> productions_d = {
       core::Rule{ 'X', "H[+X]H[-X]+X"},
@@ -120,12 +121,12 @@ int main()
         return {28,116,72}; // Green
       return {12,47,55}; // Brown
     };
-    turtle(drawer, generated_d, pi9, palette_d);
+    turtle(drawer, generated_d, pi9, length, palette_d);
     drawer.write_img("example/d_example.png");
 
   //   /* ----------------- */
 
-    drawer = Drawer(height, width, starting, length);
+    drawer = Drawer(height, width, starting);
     std::string axiom_e = "X";
     std::vector<core::Rule> productions_e = {
       core::Rule{ 'X', "H[+X][-X]HX"},
@@ -136,12 +137,12 @@ int main()
     core::LSystem lsys_e{ axiom_e, productions_e };
 
     auto generated_e = lsys_e.generate(7);
-    turtle(drawer, generated_e, pi7, palette_d);
+    turtle(drawer, generated_e, pi7, length, palette_d);
     drawer.write_img("example/e_example.png");
 
     // /* ----------------- */
 
-    drawer = Drawer(height, width, starting, length);
+    drawer = Drawer(height, width, starting);
     std::string axiom_f = "X";
     std::vector<core::Rule> productions_f = {
       core::Rule{ 'X', "H-[[X]+X]+H[+HX]-X"},
@@ -153,13 +154,13 @@ int main()
 
     auto generated_f = lsys_f.generate(5);
 
-    turtle(drawer, generated_f, pi8, palette_d);
+    turtle(drawer, generated_f, pi8, length, palette_d);
     drawer.write_img("example/f_example.png");
 
     // /* ----------------- */
 
     length = 15;
-    drawer = Drawer(500, 1000, {620, 430}, length);
+    drawer = Drawer(500, 1000, {620, 430});
     std::string axiom_leaf = "HG";
     std::vector<core::Rule> productions_leaves = {
       core::Rule{'G',  "G+[+G-G-G]-[-G+G+G]"},
@@ -169,14 +170,14 @@ int main()
     core::LSystem lsys_leaves{ axiom_leaf, productions_leaves };
     auto leaves = lsys_leaves.generate(4);
 
-    turtle(drawer, leaves, pi / 12,[](const char) -> Scalar {return {2, 4, 33};}, 1);
+    turtle(drawer, leaves, pi / 12, length, [](const char) -> Scalar {return {2, 4, 33};}, 1);
     drawer.write_img("example/g_leaves_right_example.png");
 
     // /* ----------------- */
 
     length = 15;
-    // drawer = Drawer(500, 1000, {620, 430}, length);
-    drawer = Drawer("example/Background3.jpg", {620, 340}, length);
+    // drawer = Drawer(500, 1000, {620, 430});
+    drawer = Drawer("example/Background3.jpg", {620, 340});
     std::string axiom_g = "F";
     // ** Alphabet **
     // F: Trunc base
@@ -198,7 +199,7 @@ int main()
     core::LSystem lsys_tree{ trunc, productions_leaves };
     auto tree = lsys_tree.generate(4);
 
-    turtle(drawer, tree, pi / 12,[](const char) -> Scalar {
+    turtle(drawer, tree, pi / 12, length, [](const char) -> Scalar {
       return {2, 4, 33};
     }, 2);
     drawer.write_img("example/g_example.png");
