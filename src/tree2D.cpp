@@ -158,21 +158,49 @@ int main()
 
     // /* ----------------- */
 
-    length = 8;
+    length = 15;
+    drawer = Drawer(500, 1000, {620, 430}, length);
+    std::string axiom_leaf = "HG";
+    std::vector<core::Rule> productions_leaves = {
+      core::Rule{'G',  "G+[+G-G-G]-[-G+G+G]"},
+      core::Rule{'H',  "H-[-H+H+H]+[+H-H-H]"},
+    };
+
+    core::LSystem lsys_leaves{ axiom_leaf, productions_leaves };
+    auto leaves = lsys_leaves.generate(4);
+
+    turtle(drawer, leaves, pi / 12,[](const char) -> Scalar {return {2, 4, 33};}, 1);
+    drawer.write_img("example/g_leaves_right_example.png");
+
+    // /* ----------------- */
+
+    length = 15;
     // drawer = Drawer(500, 1000, {620, 430}, length);
     drawer = Drawer("example/Background3.jpg", {620, 340}, length);
     std::string axiom_g = "F";
-    std::vector<core::Rule> productions_g = {
-      core::Rule{'F',  "F[+L][-R]"},
-      core::Rule{'R', std::vector<std::string>{"R[+L][-R]", "R[-R]"} },
+    // ** Alphabet **
+    // F: Trunc base
+    // L: Left branch
+    // R: Right branch
+    // G: Left leaves
+    // H: Right leaves
+    std::vector<core::Rule> productions_g_trunc = {
+      core::Rule{'F',  "F[+G][--H]"},
+      core::Rule{'G', std::vector<std::string>{"L[+G][-H]", "L[+G]"} },
+      core::Rule{'H', std::vector<std::string>{"R[+G][-H]", "R[-H]"} },
       core::Rule{'L', std::vector<std::string>{"L[+L][-R]", "L[+L]"} },
+      core::Rule{'R', std::vector<std::string>{"R[+L][-R]", "R[-R]"} },
     };
 
-    core::LSystem lsys_g{ axiom_g, productions_g };
+    core::LSystem lsys_trunc{ axiom_g, productions_g_trunc };
+    auto trunc = lsys_trunc.generate(5);
 
-    auto generated_g = lsys_g.generate(10);
+    core::LSystem lsys_tree{ trunc, productions_leaves };
+    auto tree = lsys_tree.generate(4);
 
-    turtle(drawer, generated_g, pi / 12,[](const char) -> Scalar { return {15, 4, 2};}, 2);
+    turtle(drawer, tree, pi / 12,[](const char) -> Scalar {
+      return {2, 4, 33};
+    }, 2);
     drawer.write_img("example/g_example.png");
-    return 0;
+   return 0;
 }

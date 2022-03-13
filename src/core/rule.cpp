@@ -17,9 +17,8 @@ namespace core
         : predecessor_{predecessor}, successors_{successors}
     {}
 
-
     Rule::Rule(const char predecessor, std::string successor)
-        : predecessor_{predecessor}, successors_{ successor}
+        : predecessor_{predecessor}, successors_{successor}
     {}
 
     char Rule::get_predecessor() const
