@@ -4,6 +4,7 @@
 //#include "opencv2/highgui.hpp"
 #include <deque>
 #include <optional>
+#include <string>
 
 //const double pi = acos(-1);
 const double pi = M_PI;
@@ -19,6 +20,7 @@ public:
 class Drawer
 {
 public:
+    Drawer(const std::string background_img, cv::Point2d start, int length);
     Drawer(int height, int width, cv::Point2d start, int length);
 
     // Draw a line based on the current state of the Drawer

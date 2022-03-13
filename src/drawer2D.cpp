@@ -2,6 +2,13 @@
 
 #include "opencv2/highgui.hpp"
 
+
+Drawer::Drawer(const std::string background_img, cv::Point2d start, int length)
+{
+    auto img = imread(background_img, cv::IMREAD_COLOR);
+    window = cv::Mat(img);
+    state = State{ pi/2, length, start };
+}
 Drawer::Drawer(int height, int width, cv::Point2d start, int length)
 {
     window = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));

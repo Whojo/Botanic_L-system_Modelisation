@@ -93,7 +93,7 @@ int main()
 
   //   auto generated_c = lsys_c.generate(4);
 
-  //   double pi8 = pi / 8; // 22.5°
+    double pi8 = pi / 8; // 22.5°
   //   turtle(drawer, generated_c, pi7);
   //   drawer.write_img("example/c_example.png");
 
@@ -106,10 +106,10 @@ int main()
     // drawer = Drawer(height, width, starting, length);
     std::string axiom_d = "X";
     std::vector<core::Rule> productions_d = {
-    core::Rule{ 'X', "H[+X]H[-X]+X"},
-    core::Rule{ 'F', "FF"},
-    core::Rule{ 'H', "FF"},
-  };
+      core::Rule{ 'X', "H[+X]H[-X]+X"},
+      core::Rule{ 'F', "FF"},
+      core::Rule{ 'H', "FF"},
+    };
 
     core::LSystem lsys_d{ axiom_d, productions_d };
 
@@ -139,20 +139,40 @@ int main()
     turtle(drawer, generated_e, pi7, palette_d);
     drawer.write_img("example/e_example.png");
 
-    /* ----------------- */
+    // /* ----------------- */
 
-  //   drawer = Drawer(height, width, starting, length);
-  //   std::string axiom_f = "X";
-  //   std::vector<core::Rule> productions_f = {
-  //   core::Rule{ 'X', "F-[[X]+X]+F[+FX]-X"},
-  //   core::Rule{ 'F', "FF"},
-  // };
+    drawer = Drawer(height, width, starting, length);
+    std::string axiom_f = "X";
+    std::vector<core::Rule> productions_f = {
+      core::Rule{ 'X', "H-[[X]+X]+H[+HX]-X"},
+      core::Rule{ 'H', "FF"},
+      core::Rule{ 'F', "FF"},
+    };
 
-  //   core::LSystem lsys_f{ axiom_f, productions_f };
+    core::LSystem lsys_f{ axiom_f, productions_f };
 
-  //   auto generated_f = lsys_f.generate(5);
+    auto generated_f = lsys_f.generate(5);
 
-  //   turtle(drawer, generated_f, pi8);
-  //   drawer.write_img("example/f_example.png");
+    turtle(drawer, generated_f, pi8, palette_d);
+    drawer.write_img("example/f_example.png");
+
+    // /* ----------------- */
+
+    length = 8;
+    // drawer = Drawer(500, 1000, {620, 430}, length);
+    drawer = Drawer("example/Background3.jpg", {620, 340}, length);
+    std::string axiom_g = "F";
+    std::vector<core::Rule> productions_g = {
+      core::Rule{'F',  "F[+L][-R]"},
+      core::Rule{'R', std::vector<std::string>{"R[+L][-R]", "R[-R]"} },
+      core::Rule{'L', std::vector<std::string>{"L[+L][-R]", "L[+L]"} },
+    };
+
+    core::LSystem lsys_g{ axiom_g, productions_g };
+
+    auto generated_g = lsys_g.generate(10);
+
+    turtle(drawer, generated_g, pi / 12,[](const char) -> Scalar { return {15, 4, 2};}, 2);
+    drawer.write_img("example/g_example.png");
     return 0;
 }
