@@ -9,10 +9,11 @@
 using namespace cv; 
 
 using Palette = std::function<Scalar(char)>;
+using LengthController = std::function<double(char)>;
 
 
 void turtle(Drawer &drawer, std::string sentence, double angle,
-            double length,
+            LengthController length_controller,
             Palette palette = [](const char) -> Scalar { return {0, 0, 0};},
             const int thickness = 2)
 {
@@ -37,7 +38,7 @@ void turtle(Drawer &drawer, std::string sentence, double angle,
                     std::cerr << "Empty pop" << std::endl;
                 break;
             default:
-                drawer.draw_line(palette(c), thickness, length);
+                drawer.draw_line(palette(c), thickness, length_controller(c));
         }
     }
 }
@@ -50,8 +51,7 @@ int main()
     int base = height - 20;
     Point2d starting(width / 2.f, base); // Starting Point of the line
 
-    int length = 4;
-    // length = 20;
+    LengthController length{[](char) {return 4;}};
     Drawer drawer = Drawer(height, width, starting);
 
 
@@ -98,10 +98,6 @@ int main()
   //   turtle(drawer, generated_c, pi7, length);
   //   drawer.write_img("example/c_example.png");
 
-  //   /* ----------------- */
-
-    length = 4;
-  //   
   //   /* ----------------- */
 
     // drawer = Drawer(height, width, starting);
@@ -159,7 +155,11 @@ int main()
 
     // /* ----------------- */
 
-    length = 15;
+    length = [](char c) {
+      if (c == 'G' or c == 'H')
+        return 3;
+      return 15;
+    };
     drawer = Drawer(500, 1000, {620, 430});
     std::string axiom_leaf = "HG";
     std::vector<core::Rule> productions_leaves = {
@@ -175,7 +175,6 @@ int main()
 
     // /* ----------------- */
 
-    length = 15;
     // drawer = Drawer(500, 1000, {620, 430});
     drawer = Drawer("example/Background3.jpg", {620, 340});
     std::string axiom_g = "F";
