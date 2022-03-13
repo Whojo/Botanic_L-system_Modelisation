@@ -2,6 +2,9 @@
 #include <iostream>
 #include <cmath>
 #include <functional>
+#include <ctime>
+#include <random>
+
 #include "drawer2D.hpp"
 
 #include "core/l_system.hpp"
@@ -45,6 +48,8 @@ void turtle(Drawer &drawer, std::string sentence, double angle,
 
 int main()
 {
+    std::srand(std::time(0));
+
     int height = 1200;
     int width = 1200;
 
@@ -177,7 +182,7 @@ int main()
 
     // drawer = Drawer(500, 1000, {620, 430});
     drawer = Drawer("example/Background3.jpg", {620, 340});
-    std::string axiom_g = "F";
+    std::string axiom_g = "F[+G][--H]";
     // ** Alphabet **
     // F: Trunc base
     // L: Left branch
@@ -185,22 +190,18 @@ int main()
     // G: Left leaves
     // H: Right leaves
     std::vector<core::Rule> productions_g_trunc = {
-      core::Rule{'F',  "F[+G][--H]"},
+      core::Rule{'F',  "F[+L][--R]"},
       core::Rule{'G', std::vector<std::string>{"L[+G][-H]", "L[+G]"} },
       core::Rule{'H', std::vector<std::string>{"R[+G][-H]", "R[-H]"} },
-      core::Rule{'L', std::vector<std::string>{"L[+L][-R]", "L[+L]"} },
-      core::Rule{'R', std::vector<std::string>{"R[+L][-R]", "R[-R]"} },
     };
 
     core::LSystem lsys_trunc{ axiom_g, productions_g_trunc };
-    auto trunc = lsys_trunc.generate(5);
+    auto trunc = lsys_trunc.generate(4);
 
     core::LSystem lsys_tree{ trunc, productions_leaves };
-    auto tree = lsys_tree.generate(4);
+    auto tree = lsys_tree.generate(3);
 
-    turtle(drawer, tree, pi / 12, length, [](const char) -> Scalar {
-      return {2, 4, 33};
-    }, 2);
+    turtle(drawer, tree, pi / 12, length, [](char) -> Scalar {return {2, 4, 33};}, 2);
     drawer.write_img("example/g_example.png");
-   return 0;
+    return 0;
 }

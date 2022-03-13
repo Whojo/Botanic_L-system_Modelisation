@@ -1,6 +1,6 @@
 #include "rule.hpp"
 
-#include  <random>
+#include <random>
 
 
 namespace
