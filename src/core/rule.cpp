@@ -14,11 +14,27 @@ namespace
 namespace core
 {
     Rule::Rule(const char predecessor, std::vector<std::string> successors)
-        : predecessor_{predecessor}, successors_{successors}
+        : predecessor_{predecessor}, successors_{successors},
+          context_checker_{[](std::optional<char>, std::optional<char>) { return true;}}
     {}
 
     Rule::Rule(const char predecessor, std::string successor)
-        : predecessor_{predecessor}, successors_{successor}
+        : predecessor_{predecessor}, successors_{successor},
+          context_checker_{[](std::optional<char>, std::optional<char>) { return true;}}
+    {}
+
+    Rule::Rule(const char predecessor, std::vector<std::string> successors,
+               const ContextChecker context_checker)
+        : predecessor_{ predecessor }
+        , successors_{ successors }
+        , context_checker_{ context_checker }
+    {}
+
+    Rule::Rule(const char predecessor, std::string successor,
+               const ContextChecker context_checker)
+        : predecessor_{ predecessor }
+        , successors_{ successor }
+        , context_checker_{ context_checker }
     {}
 
     char Rule::get_predecessor() const
@@ -30,4 +46,10 @@ namespace core
     {
         return select_randomly(successors_);
     }
-}
+
+    bool Rule::check_context(std::optional<char> left_context,
+                             std::optional<char> right_context) const
+    {
+        return context_checker_(left_context, right_context);
+    }
+} // namespace core

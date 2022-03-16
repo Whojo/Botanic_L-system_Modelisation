@@ -12,12 +12,14 @@ namespace core
     {
     public:
         LSystem(std::string axiom_, std::vector<Rule> productions_);
-
+        LSystem(std::string axiom_, std::vector<Rule> context_free_productions_,
+                std::vector<Rule> context_sensitive_productions_);
 
         std::string generate(const int n) const;
 
     private:
         std::string axiom_;
-        std::vector<Rule> productions_;
+        std::vector<Rule> context_free_productions_;
+        std::vector<Rule> context_sensitive_productions_;
     };
 }

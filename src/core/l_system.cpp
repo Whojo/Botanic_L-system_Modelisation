@@ -4,7 +4,13 @@
 namespace core
 {
     LSystem::LSystem(std::string axiom_, std::vector<Rule> productions_)
-        : axiom_{axiom_}, productions_{productions_}
+        : axiom_{axiom_}, context_free_productions_{productions_}
+    {}
+
+    LSystem::LSystem(std::string axiom_, std::vector<Rule> context_free_productions_,
+            std::vector<Rule> context_sensitive_productions_)
+        : axiom_{axiom_}, context_free_productions_{context_free_productions_},
+          context_sensitive_productions_{context_sensitive_productions_}
     {}
 
     std::string LSystem::generate(const int n) const
@@ -13,11 +19,24 @@ namespace core
         for (int i = 0; i < n; i++)
         {
             std::string next_state;
-            for (const auto &c : state)
+            for (auto it = state.begin(); it < state.end(); it++)
             {
-                std::string next_successor(1, c);
-                for (const auto &rule : productions_)
-                    if (rule.get_predecessor() == c)
+                std::string next_successor(1, *it);
+                for (const auto &rule : context_free_productions_)
+                    if (rule.get_predecessor() == *it)
+                        next_successor = rule.get_successor();
+
+                std::optional<char> left_context = std::nullopt;
+                if (it != state.begin())
+                    left_context = *(it - 1);
+
+                std::optional<char> right_context = std::nullopt;
+                if (it != state.end())
+                    right_context = *(it + 1);
+
+                for (const auto &rule : context_sensitive_productions_)
+                    if (rule.get_predecessor() == *it
+                        && rule.check_context(left_context, right_context))
                         next_successor = rule.get_successor();
                 next_state += next_successor;
             }    

@@ -203,5 +203,22 @@ int main()
 
     turtle(drawer, tree, pi / 12, length, [](char) -> Scalar {return {2, 4, 33};}, 2);
     drawer.write_img("example/g_example.png");
+
+    // /* ----------------- */
+
+    std::string axiom_cont = "baaaaaaaa";
+    std::vector<core::Rule> productions_cont = {
+      core::Rule{'b', "a"},
+      core::Rule{'a', "b", [](std::optional<char> left, std::optional<char>) {return left == 'b';} },
+    };
+
+    core::LSystem lsys_cont{ axiom_cont, {}, productions_cont };
+    std::cout << axiom_cont            << std::endl;
+    std::cout << lsys_cont.generate(1) << std::endl;
+    std::cout << lsys_cont.generate(2) << std::endl;
+    std::cout << lsys_cont.generate(3) << std::endl;
+    std::cout << lsys_cont.generate(4) << std::endl;
+
+
     return 0;
 }
