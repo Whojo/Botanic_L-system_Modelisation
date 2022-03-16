@@ -4,13 +4,26 @@
 namespace core
 {
     LSystem::LSystem(std::string axiom_, std::vector<Rule> productions_)
-        : axiom_{axiom_}, context_free_productions_{productions_}
+        : axiom_{ axiom_ }
+        , context_free_productions_{ productions_ }
     {}
 
-    LSystem::LSystem(std::string axiom_, std::vector<Rule> context_free_productions_,
-            std::vector<Rule> context_sensitive_productions_)
-        : axiom_{axiom_}, context_free_productions_{context_free_productions_},
-          context_sensitive_productions_{context_sensitive_productions_}
+    LSystem::LSystem(std::string axiom_,
+                     std::vector<Rule> context_free_productions_,
+                     std::vector<Rule> context_sensitive_productions_)
+        : axiom_{ axiom_ }
+        , context_free_productions_{ context_free_productions_ }
+        , context_sensitive_productions_{ context_sensitive_productions_ }
+    {}
+
+    LSystem::LSystem(std::string axiom_,
+                     std::vector<Rule> context_free_productions_,
+                     std::vector<Rule> context_sensitive_productions_,
+                     std::string ignore)
+        : axiom_{ axiom_ }
+        , context_free_productions_{ context_free_productions_ }
+        , context_sensitive_productions_{ context_sensitive_productions_ }
+        , ignore_{ ignore }
     {}
 
     std::string LSystem::generate(const int n) const
@@ -27,12 +40,28 @@ namespace core
                         next_successor = rule.get_successor();
 
                 std::optional<char> left_context = std::nullopt;
-                if (it != state.begin())
-                    left_context = *(it - 1);
+                if (it != state.begin()) {
+                    auto left_context_it = std::find_if(
+                        std::reverse_iterator(it - 1), state.rbegin(),
+                        [&](char c) {
+                            return ignore_.find(c) == std::string::npos;
+                        });
+
+                    if (left_context_it != state.rbegin())
+                        left_context = *left_context_it;
+                }
 
                 std::optional<char> right_context = std::nullopt;
-                if (it != state.end())
-                    right_context = *(it + 1);
+                if (it != state.end()) {
+                    auto right_context_it = std::find_if(
+                        it + 1, state.end(),
+                        [&](char c) {
+                            return ignore_.find(c) == std::string::npos;
+                        });
+
+                    if (right_context_it != state.end())
+                        right_context = *right_context_it;
+                }
 
                 for (const auto &rule : context_sensitive_productions_)
                     if (rule.get_predecessor() == *it

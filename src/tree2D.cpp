@@ -206,19 +206,18 @@ int main()
 
     // /* ----------------- */
 
-    std::string axiom_cont = "baaaaaaaa";
+    std::string axiom_cont = "bcaaaaaaa";
     std::vector<core::Rule> productions_cont = {
       core::Rule{'b', "a"},
       core::Rule{'a', "b", [](std::optional<char> left, std::optional<char>) {return left == 'b';} },
     };
 
-    core::LSystem lsys_cont{ axiom_cont, {}, productions_cont };
+    core::LSystem lsys_cont{ axiom_cont, {}, productions_cont, "c" };
     std::cout << axiom_cont            << std::endl;
     std::cout << lsys_cont.generate(1) << std::endl;
     std::cout << lsys_cont.generate(2) << std::endl;
     std::cout << lsys_cont.generate(3) << std::endl;
     std::cout << lsys_cont.generate(4) << std::endl;
-
 
     return 0;
 }
