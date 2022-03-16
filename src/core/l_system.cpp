@@ -1,5 +1,5 @@
 #include "l_system.hpp"
-
+#include <iostream>
 
 namespace core
 {
@@ -40,22 +40,23 @@ namespace core
                         next_successor = rule.get_successor();
 
                 std::optional<char> left_context = std::nullopt;
-                if (it != state.begin()) {
+                if (it != state.begin())
+                {
                     auto left_context_it = std::find_if(
-                        std::reverse_iterator(it - 1), state.rbegin(),
+                        std::reverse_iterator(it), state.rend(),
                         [&](char c) {
                             return ignore_.find(c) == std::string::npos;
                         });
 
-                    if (left_context_it != state.rbegin())
+                    if (left_context_it != state.rend())
                         left_context = *left_context_it;
                 }
 
                 std::optional<char> right_context = std::nullopt;
-                if (it != state.end()) {
-                    auto right_context_it = std::find_if(
-                        it + 1, state.end(),
-                        [&](char c) {
+                if (it != state.end())
+                {
+                    auto right_context_it =
+                        std::find_if(it + 1, state.end(), [&](char c) {
                             return ignore_.find(c) == std::string::npos;
                         });
 
@@ -68,10 +69,10 @@ namespace core
                         && rule.check_context(left_context, right_context))
                         next_successor = rule.get_successor();
                 next_state += next_successor;
-            }    
+            }
             state = next_state;
         }
 
         return state;
     }
-}
+} // namespace core
