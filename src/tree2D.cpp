@@ -206,18 +206,44 @@ int main()
 
     // /* ----------------- */
 
-    std::string axiom_cont = "bcaaaaaaa";
+    std::string axiom_cont = "bcdaaaa";
     std::vector<core::Rule> productions_cont = {
       core::Rule{'b', "a"},
       core::Rule{'a', "b", [](std::optional<char> left, std::optional<char>) {return left == 'b';} },
     };
 
-    core::LSystem lsys_cont{ axiom_cont, {}, productions_cont, "c" };
+    core::LSystem lsys_cont{ axiom_cont, {}, productions_cont, "cd" };
     std::cout << axiom_cont            << std::endl;
     std::cout << lsys_cont.generate(1) << std::endl;
     std::cout << lsys_cont.generate(2) << std::endl;
     std::cout << lsys_cont.generate(3) << std::endl;
     std::cout << lsys_cont.generate(4) << std::endl;
+    std::cout << lsys_cont.generate(5) << std::endl;
+
+    // /* ----------------- */
+
+    length = [](char) {
+      return 15;
+    };
+    drawer = Drawer(height, width, starting);
+    std::string axiom_a_cont = "F1F1F1";
+    std::vector<core::Rule> productions_a_cont = {
+        core::Rule{'0', "0", [](std::optional<char> left, std::optional<char> right) {return left == '0' && right == '0';}},
+        core::Rule{'0', "1[+F1F1]", [](std::optional<char> left, std::optional<char> right) {return left == '0' && right == '1';}},
+        core::Rule{'1', "1", [](std::optional<char> left, std::optional<char> right) {return left == '0' && right == '0';}},
+        core::Rule{'1', "1", [](std::optional<char> left, std::optional<char> right) {return left == '0' && right == '1';}},
+        core::Rule{'0', "0", [](std::optional<char> left, std::optional<char> right) {return left == '1' && right == '0';}},
+        core::Rule{'0', "1F1", [](std::optional<char> left, std::optional<char> right) {return left == '1' && right == '1';}},
+        core::Rule{'1', "0", [](std::optional<char> left, std::optional<char> right) {return left == '1' && right == '0';}},
+        core::Rule{'1', "0", [](std::optional<char> left, std::optional<char> right) {return left == '1' && right == '1';}},
+        core::Rule{'+', "-", [](std::optional<char>, std::optional<char>) {return true;}},
+        core::Rule{'-', "+", [](std::optional<char>, std::optional<char>) {return true;}},
+  };
+    core::LSystem lsys_a_cont{ axiom_a_cont, {}, productions_a_cont, "+-F" };
+    
+    auto tree_cont = lsys_a_cont.generate(30);    
+    turtle(drawer, tree_cont, pi / 8, length, [](char) -> Scalar {return {2, 4, 33};}, 2);
+    drawer.write_img("example/acont_example.png");
 
     return 0;
 }
