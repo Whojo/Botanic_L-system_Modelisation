@@ -19,7 +19,7 @@ namespace core
     LSystem::LSystem(std::string axiom_,
                      std::vector<Rule> context_free_productions_,
                      std::vector<Rule> context_sensitive_productions_,
-                     std::string ignore)
+                     cstr &ignore)
         : axiom_{ axiom_ }
         , context_free_productions_{ context_free_productions_ }
         , context_sensitive_productions_{ context_sensitive_productions_ }

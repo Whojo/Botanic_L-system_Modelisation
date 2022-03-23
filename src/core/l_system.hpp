@@ -15,7 +15,7 @@ namespace core
         LSystem(std::string axiom_, std::vector<Rule> context_free_productions_,
                 std::vector<Rule> context_sensitive_productions_);
         LSystem(std::string axiom_, std::vector<Rule> context_free_productions_,
-                std::vector<Rule> context_sensitive_productions_, std::string ignore);
+                std::vector<Rule> context_sensitive_productions_, cstr &ignore);
 
         std::string generate(const int n) const;
 

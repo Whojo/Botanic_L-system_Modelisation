@@ -12,7 +12,7 @@ using cstr = const std::string;
 
 namespace core
 {
-    using ContextChecker = std::function<bool(const std::string,const std::string)>;
+    using ContextChecker = std::function<bool(cstr, cstr)>;
 
     class Rule
     {
