@@ -1,5 +1,4 @@
 #pragma once
-
 #include <optional>
 #include <functional>
 #include <string>
@@ -7,9 +6,13 @@
 #include <memory>
 
 
+using oc = std::optional<char>;
+using ostr = std::optional<std::string>;
+using cstr = const std::string;
+
 namespace core
 {
-    using ContextChecker = std::function<bool(std::optional<char>, std::optional<char>)>;
+    using ContextChecker = std::function<bool(const std::string,const std::string)>;
 
     class Rule
     {
@@ -23,8 +26,8 @@ namespace core
 
         char get_predecessor() const;
         std::string get_successor() const;
-        bool check_context(std::optional<char> left_context,
-                           std::optional<char> right_context) const;
+
+        bool check_context(const std::string &left_context, const std::string &right_context) const;
 
     private:
         const char predecessor_;

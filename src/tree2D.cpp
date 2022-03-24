@@ -206,19 +206,51 @@ int main()
 
     // /* ----------------- */
 
-    std::string axiom_cont = "baaaaaaaa";
-    std::vector<core::Rule> productions_cont = {
-      core::Rule{'b', "a"},
-      core::Rule{'a', "b", [](std::optional<char> left, std::optional<char>) {return left == 'b';} },
+    // std::string axiom_cont = "bcdaaaa";
+    // std::vector<core::Rule> productions_cont = {
+    //   core::Rule{'b', "a"},
+    //   core::Rule{'a', "b", [](std::optional<char> left, std::optional<char>) {return left == 'b';} },
+    // };
+
+    // core::LSystem lsys_cont{ axiom_cont, {}, productions_cont, "cd" };
+    // std::cout << axiom_cont            << std::endl;
+    // std::cout << lsys_cont.generate(1) << std::endl;
+    // std::cout << lsys_cont.generate(2) << std::endl;
+    // std::cout << lsys_cont.generate(3) << std::endl;
+    // std::cout << lsys_cont.generate(4) << std::endl;
+    // std::cout << lsys_cont.generate(5) << std::endl;
+
+    // /* ----------------- */
+
+    length = [](char) {
+      return 50;
     };
+    drawer = Drawer(height, width, starting);
+    std::string axiom_cont_test = "F";
+    std::vector<core::Rule> productions_cont_test = {
+        core::Rule{'F', "FF", [](cstr &left, cstr &right) {return true;}},
+        core::Rule{'F', "F[+F]", [](cstr &left, cstr &right) {return left.ends_with("FF");}},
+  };
+    core::LSystem lsys_cont_test{ axiom_cont_test, {}, productions_cont_test, "+[]" };
+    auto tree_cont = lsys_cont_test.generate(5);
+    std::cout << tree_cont << std::endl;
+    turtle(drawer, tree_cont, pi / 8, length, [](char) -> Scalar {return {2, 4, 33};}, 2);
+    drawer.write_img("example/cont_test_example.png");
 
-    core::LSystem lsys_cont{ axiom_cont, {}, productions_cont };
-    std::cout << axiom_cont            << std::endl;
-    std::cout << lsys_cont.generate(1) << std::endl;
-    std::cout << lsys_cont.generate(2) << std::endl;
-    std::cout << lsys_cont.generate(3) << std::endl;
-    std::cout << lsys_cont.generate(4) << std::endl;
-
+    // /* ----------------- */
+    length = [](char) {
+      return 5;
+    };
+    drawer = Drawer(height, width, starting);
+    std::string axiom_fractale_test = "F-F-F-F";
+    std::vector<core::Rule> productions_fractale_test = {
+        // core::Rule{'F', "FF-F-F-F-FF", [](std::optional<char>, std::optional<char>) {return true;}},
+        {'F', "FF-F-F-F-FF", [](cstr &left, cstr &right){return true;}}
+  };
+    core::LSystem lsys_fractale_test{ axiom_fractale_test, {}, productions_fractale_test, "" };
+    auto tree_fractale = lsys_fractale_test.generate(4);
+    turtle(drawer, tree_fractale, pi / 2, length, [](char) -> Scalar {return {2, 4, 33};}, 2);
+    drawer.write_img("example/fractale_test_example.png");
 
     return 0;
 }
