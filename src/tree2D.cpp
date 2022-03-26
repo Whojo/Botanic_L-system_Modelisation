@@ -209,7 +209,7 @@ int main()
     // std::string axiom_cont = "bcdaaaa";
     // std::vector<core::Rule> productions_cont = {
     //   core::Rule{'b', "a"},
-    //   core::Rule{'a', "b", [](std::optional<char> left, std::optional<char>) {return left == 'b';} },
+    //   core::Rule{'a', "b", [](cstr &left, cstr&) {return left == "b";} },
     // };
 
     // core::LSystem lsys_cont{ axiom_cont, {}, productions_cont, "cd" };
@@ -244,7 +244,6 @@ int main()
     drawer = Drawer(height, width, starting);
     std::string axiom_fractale_test = "F-F-F-F";
     std::vector<core::Rule> productions_fractale_test = {
-        // core::Rule{'F', "FF-F-F-F-FF", [](std::optional<char>, std::optional<char>) {return true;}},
         {'F', "FF-F-F-F-FF", [](cstr &left, cstr &right){return true;}}
   };
     core::LSystem lsys_fractale_test{ axiom_fractale_test, {}, productions_fractale_test, "" };

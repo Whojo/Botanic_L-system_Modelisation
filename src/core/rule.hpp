@@ -6,7 +6,6 @@
 #include <memory>
 
 
-using oc = std::optional<char>;
 using ostr = std::optional<std::string>;
 using cstr = const std::string;
 
