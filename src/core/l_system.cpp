@@ -1,58 +1,77 @@
 #include "l_system.hpp"
-#include "utils.hpp"
+
+#include <algorithm>
+
 
 namespace core
 {
-    LSystem::LSystem(std::string axiom_, std::vector<Rule> productions_)
+    namespace
+    {
+        std::optional<State> apply_rules(const std::vector<Rule> &rules, const Module &pred,
+                                         const State &left, const State &right)
+        {
+            for (const auto &rule : rules)
+            {
+                const std::optional<State> &possible_succ = rule.apply(pred, left, right);
+                if (possible_succ.has_value())
+                    return *possible_succ;
+            }
+
+            return std::nullopt;
+        }
+
+        template<class Iterator>
+        State get_context(const Iterator &begin, const Iterator &end, const std::string &ignore)
+        {
+            std::vector<Module> modules;
+            std::copy_if(begin, end, std::back_inserter(modules), [&](const Module &mod) {
+                return ignore.find(mod.letter) == std::string::npos;
+            });
+
+            return modules;
+        }
+    }
+
+    LSystem::LSystem(const State &axiom_, const std::vector<Rule> &productions_)
         : axiom_{ axiom_ }
         , context_free_productions_{ productions_ }
     {}
 
-    LSystem::LSystem(std::string axiom_,
-                     std::vector<Rule> context_free_productions_,
-                     std::vector<Rule> context_sensitive_productions_)
+    LSystem::LSystem(const State &axiom_,
+                     const std::vector<Rule> &context_free_productions_,
+                     const std::vector<Rule> &context_sensitive_productions_)
         : axiom_{ axiom_ }
         , context_free_productions_{ context_free_productions_ }
         , context_sensitive_productions_{ context_sensitive_productions_ }
     {}
 
-    LSystem::LSystem(std::string axiom_,
-                     std::vector<Rule> context_free_productions_,
-                     std::vector<Rule> context_sensitive_productions_,
-                     std::string ignore)
+    LSystem::LSystem(const State &axiom_,
+                     const std::vector<Rule> &context_free_productions_,
+                     const std::vector<Rule> &context_sensitive_productions_,
+                     const std::string &ignore)
         : axiom_{ axiom_ }
         , context_free_productions_{ context_free_productions_ }
         , context_sensitive_productions_{ context_sensitive_productions_ }
         , ignore_{ ignore }
     {}
 
-
-    std::string LSystem::generate(const int n) const
+    State LSystem::generate(const int n) const
     {
-        std::string state = axiom_;
+        State state = axiom_;
         for (int i = 0; i < n; i++)
         {
-            std::string next_state;
-            for (auto it = state.begin(); it < state.end(); it++)
+            const auto &modules = state.get_modules();
+            State next_state;
+            for (auto it = modules.begin(); it < modules.end(); it++)
             {
-                std::string next_successor(1, *it);
-                for (const auto &rule : context_free_productions_)
-                    if (rule.get_predecessor() == *it)
-                        next_successor = rule.get_successor();
+                const State &cont_free_succ = apply_rules(context_free_productions_,
+                                                          *it, {}, {}).value_or(State({*it}));
 
-                int index = it - state.begin();
-                int end_index = state.length() - index;
-                std::string left_context = state.substr(0, (index < 0) ? 0:index);
-                std::string right_context = state.substr(index, end_index);
+                const State &left  = get_context(modules.begin(), it, ignore_);
+                const State &right = get_context(it,   modules.end(), ignore_);
 
-                ignore_chars(left_context, ignore_);
-                ignore_chars(right_context, ignore_);
-
-                for (const auto &rule : context_sensitive_productions_)
-                    if (rule.get_predecessor() == *it
-                        && rule.check_context(left_context, right_context))
-                        next_successor = rule.get_successor();
-                next_state += next_successor;
+                next_state += apply_rules(context_sensitive_productions_,
+                                          *it, left, right).value_or(cont_free_succ);
             }
             state = next_state;
         }

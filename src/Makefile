@@ -7,10 +7,10 @@
 
 CC = g++
 
-CORE_CPP_FILES = core/l_system.cpp core/rule.cpp
+CORE_CPP_FILES = core/l_system.cpp core/rule.cpp core/module.cpp core/state.cpp
 CORE_OBJ_FILES = $(CORE_CPP_FILES:.cpp=.o)
 
-CXX_FLAGS += -Wall -Wextra -O3 -g -std=c++20
+CXX_FLAGS += -Wall -Wextra -g -std=c++20 #-O3
 CXX_FLAGS += -lm
 # CXX_FLAGS += -m64 -march=native
 # CXX_FLAGS += -fopt-info-vec-optimized #-fopt-info-vec-missed -ftree-vectorize
@@ -78,6 +78,6 @@ build-tree2D: $(CORE_OBJ_FILES)
 
 clean:
 	rm -f lsys bin_tree2D
-	rm -f $(CORE_OBJ_FILES) main.o
+	rm -f $(CORE_OBJ_FILES) main.o tree2D.o drawer2D.o
 
 # end

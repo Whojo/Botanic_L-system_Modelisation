@@ -5,51 +5,57 @@
 
 namespace
 {
-    std::string select_randomly(const std::vector<std::string> &vect)
+    core::State select_randomly(const std::vector<core::State> &states)
     {
-        return vect[std::rand() % vect.size()];
+        return states[std::rand() % states.size()];
+
     }
 } // namespace
 
 namespace core
 {
-    Rule::Rule(const char predecessor, std::vector<std::string> successors)
-        : predecessor_{predecessor}, successors_{successors},
-          context_checker_{[](ostr, ostr) { return true;}}
+    Rule::Rule(const Module &pred, const State &successor)
+        : application{[=](const Module &pred_, const State &, const State &) -> std::optional<State> {
+            if (pred.letter != pred_.letter)
+                return std::nullopt;
+            return successor;
+        }}
     {}
 
-    Rule::Rule(const char predecessor, std::string successor)
-        : predecessor_{predecessor}, successors_{successor},
-          context_checker_{[](ostr, ostr) { return true;}}
+    Rule::Rule(const Module &pred, const std::vector<State> &successors)
+        : application{[=](const Module &pred_, const State &, const State &) -> std::optional<State> {
+            if (pred.letter != pred_.letter)
+                return std::nullopt;
+            return select_randomly(successors);
+        }}
     {}
 
-    Rule::Rule(const char predecessor, std::vector<std::string> successors,
+    Rule::Rule(const Module &pred, const State &successor,
+               const ContextChecker &context_checker)
+        : application{[=](const Module &pred_, const State &left,
+                          const State &right) -> std::optional<State> {
+            if (pred.letter != pred_.letter or not context_checker(left, right))
+                return std::nullopt;
+            return successor;
+        }}
+    {}
+
+    Rule::Rule(const Module &pred, const std::vector<State> &successors,
                const ContextChecker context_checker)
-        : predecessor_{ predecessor }
-        , successors_{ successors }
-        , context_checker_{ context_checker }
+        : application{[=](const Module &pred_, const State &left,
+                          const State &right) -> std::optional<State> {
+            if (pred.letter != pred_.letter or not context_checker(left, right))
+                return std::nullopt;
+            return select_randomly(successors);
+        }}
     {}
 
-    Rule::Rule(const char predecessor, std::string successor,
-               const ContextChecker context_checker)
-        : predecessor_{ predecessor }
-        , successors_{ successor }
-        , context_checker_{ context_checker }
+    Rule::Rule(const RuleApplication &application)
+        : application{application}
     {}
 
-    char Rule::get_predecessor() const
+    std::optional<State> Rule::apply(const Module &pred, const State &left, const State &right) const
     {
-        return predecessor_;
-    }
-
-    std::string Rule::get_successor() const
-    {
-        return select_randomly(successors_);
-    }
-
-    bool Rule::check_context(cstr &left_context,
-                             cstr &right_context) const
-    {
-        return context_checker_(left_context, right_context);
+        return application(pred, left, right);
     }
 } // namespace core
