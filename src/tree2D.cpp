@@ -290,8 +290,8 @@ int main()
 
     auto generated_param = lsys_param.generate(10);
 
-    double pi7 = pi / 2.1; // 85°
-    turtle(drawer, generated_param, pi7, length);
+    double pi2 = pi / 2.1; // 85°
+    turtle(drawer, generated_param, pi2, length);
     drawer.write_img("example/param_example.png");
 
     return 0;
