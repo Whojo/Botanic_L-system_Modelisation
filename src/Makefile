@@ -56,6 +56,11 @@ post-build:
 # build-main: $(CORE_OBJ_FILES)
 # 	$(CC) main.cpp -o lsys $(CORE_OBJ_FILES) $(CXX_FLAGS)
 
+# tree2D: pre-build build-tree2D post-build
+
+# build-tree2D: $(CORE_OBJ_FILES)
+# 	$(CC) tree2D.cpp drawer2D.cpp -o bin_tree2D $(CORE_OBJ_FILES) $(CXX_FLAGS) $(LIBS)
+
 fractals: pre-build build-fractals post-build
 
 build-fractals: $(CORE_OBJ_FILES)
