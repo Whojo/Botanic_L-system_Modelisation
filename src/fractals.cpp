@@ -12,7 +12,7 @@ int main()
     int width = 1200;
 
     int base = height - 20;
-    Point2d starting(width / 2.f, base); // Starting Point of the line
+    Point2d starting(20, base); // Starting Point of the line
 
     LengthController length{[](char) {return 4;}};
     Drawer drawer = Drawer(height, width, starting);
@@ -23,7 +23,7 @@ int main()
 
     // /* ----------------- */
     length = [](char) {
-      return 5;
+      return 10;
     };
     drawer = Drawer(height, width, starting);
     std::string axiom_fractale_test = "F-F-F-F";
