@@ -4,6 +4,9 @@
 #include "core/l_system.hpp"
 #include "utils/turtle.hpp"
 
+
+using namespace std::string_literals;
+
 int main()
 {
     std::srand(std::time(0));
@@ -23,42 +26,42 @@ int main()
 
     std::string axiom_a = "F";
     std::vector<core::Rule> productions_a = {
-    core::Rule{ 'F', "F[+F]F[-F]F"},
+    core::Rule{ 'F', "F[+F]F[-F]F"s},
   };
 
     core::LSystem lsys_a{ axiom_a, productions_a };
 
     auto generated_a = lsys_a.generate(5);
 
-    turtle2D(drawer, generated_a, pi7, length);
+    turtle2D(drawer, generated_a.get_letters(), pi7, length);
     drawer.write_img("output/brackets/a_example.png");
 
   //   /* ----------------- */
     drawer = Drawer(height, width, starting);
     std::string axiom_b = "F";
     std::vector<core::Rule> productions_b = {
-    core::Rule{ 'F', "F[+F]F[-F][F]"},
+    core::Rule{ 'F', "F[+F]F[-F][F]"s},
   };
 
     core::LSystem lsys_b{ axiom_b, productions_b };
 
     auto generated_b = lsys_b.generate(5);
 
-    turtle2D(drawer, generated_b, pi7, length);
+    turtle2D(drawer, generated_b.get_letters(), pi7, length);
     drawer.write_img("output/brackets/b_example.png");
 
   //   /* ----------------- */
     drawer = Drawer(height, width, starting);
     std::string axiom_c = "F";
     std::vector<core::Rule> productions_c = {
-    core::Rule{ 'F', "FF-[-F+F+F]+[+F-F-F]"},
+    core::Rule{ 'F', "FF-[-F+F+F]+[+F-F-F]"s},
   };
 
     core::LSystem lsys_c{ axiom_c, productions_c };
 
     auto generated_c = lsys_c.generate(4);
 
-    turtle2D(drawer, generated_c, pi7, length);
+    turtle2D(drawer, generated_c.get_letters(), pi7, length);
     drawer.write_img("output/brackets/c_example.png");
 
   //   /* ----------------- */
@@ -66,9 +69,9 @@ int main()
     drawer = Drawer(height, width, starting);
     std::string axiom_d = "X";
     std::vector<core::Rule> productions_d = {
-      core::Rule{ 'X', "H[+X]H[-X]+X"},
-      core::Rule{ 'F', "FF"},
-      core::Rule{ 'H', "FF"},
+      core::Rule{ 'X', "H[+X]H[-X]+X"s},
+      core::Rule{ 'F', "FF"s},
+      core::Rule{ 'H', "FF"s},
     };
 
     core::LSystem lsys_d{ axiom_d, productions_d };
@@ -80,7 +83,7 @@ int main()
         return {28,116,72}; // Green
       return {12,47,55}; // Brown
     };
-    turtle2D(drawer, generated_d, pi9, length, palette_d);
+    turtle2D(drawer, generated_d.get_letters(), pi9, length, palette_d);
     drawer.write_img("output/brackets/d_example.png");
 
   //   /* ----------------- */
@@ -88,15 +91,15 @@ int main()
     drawer = Drawer(height, width, starting);
     std::string axiom_e = "X";
     std::vector<core::Rule> productions_e = {
-      core::Rule{ 'X', "H[+X][-X]HX"},
-      core::Rule{ 'H', "FF"},
-      core::Rule{ 'F', "FF"},
+      core::Rule{ 'X', "H[+X][-X]HX"s},
+      core::Rule{ 'H', "FF"s},
+      core::Rule{ 'F', "FF"s},
     };
 
     core::LSystem lsys_e{ axiom_e, productions_e };
 
     auto generated_e = lsys_e.generate(7);
-    turtle2D(drawer, generated_e, pi7, length, palette_d);
+    turtle2D(drawer, generated_e.get_letters(), pi7, length, palette_d);
     drawer.write_img("output/brackets/e_example.png");
 
     // /* ----------------- */
@@ -104,16 +107,16 @@ int main()
     drawer = Drawer(height, width, starting);
     std::string axiom_f = "X";
     std::vector<core::Rule> productions_f = {
-      core::Rule{ 'X', "H-[[X]+X]+H[+HX]-X"},
-      core::Rule{ 'H', "FF"},
-      core::Rule{ 'F', "FF"},
+      core::Rule{ 'X', "H-[[X]+X]+H[+HX]-X"s},
+      core::Rule{ 'H', "FF"s},
+      core::Rule{ 'F', "FF"s},
     };
 
     core::LSystem lsys_f{ axiom_f, productions_f };
 
     auto generated_f = lsys_f.generate(5);
 
-    turtle2D(drawer, generated_f, pi8, length, palette_d);
+    turtle2D(drawer, generated_f.get_letters(), pi8, length, palette_d);
     drawer.write_img("output/brackets/f_example.png");
 
     return 0;

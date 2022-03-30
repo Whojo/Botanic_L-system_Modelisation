@@ -4,6 +4,8 @@
 #include "core/l_system.hpp"
 #include "utils/turtle.hpp"
 
+using namespace std::string_literals;
+
 int main()
 {
     std::srand(std::time(0));
@@ -28,10 +30,10 @@ int main()
     drawer = Drawer(height, width, starting);
     std::string axiom_fractale_test = "F-F-F-F";
     std::vector<core::Rule> productions_fractale_test = {
-        {'F', "FF-F-F-F-FF", [](cstr &left, cstr &right){return true;}}
+        {'F', "FF-F-F-F-FF"s}
   };
     core::LSystem lsys_fractale_test{ axiom_fractale_test, {}, productions_fractale_test, "" };
-    auto tree_fractale = lsys_fractale_test.generate(4);
-    turtle2D(drawer, tree_fractale, pi / 2, length, [](char) -> Scalar {return {2, 4, 33};}, 2);
+    core::State tree_fractale = lsys_fractale_test.generate(4);
+    turtle2D(drawer, tree_fractale.get_letters(), pi / 2, length, [](char) -> Scalar {return {2, 4, 33};}, 2);
     drawer.write_img("output/fractals/example.png");
 }

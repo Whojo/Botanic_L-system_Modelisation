@@ -27,7 +27,7 @@ namespace core
         Rule(const Module &pred, const State &successor,
              const ContextChecker &context_checker);
         Rule(const Module &pred, const std::vector<State> &successors,
-             const ContextChecker context_checker);
+             const ContextChecker &context_checker);
         Rule(const RuleApplication &application);
 
         std::optional<State> apply(const Module &pred, const State &left, const State &right) const;

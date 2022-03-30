@@ -22,6 +22,14 @@ namespace core
     {
         return modules;
     }
+    
+    std::string State::get_letters() const
+    {
+        std::string s;
+        for (const Module &module: get_modules())
+            s += module.letter;
+        return s;
+    }
 
     State& State::operator+=(const State &rhs)
     {

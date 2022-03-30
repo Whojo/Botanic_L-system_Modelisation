@@ -36,7 +36,7 @@ define default_color
 endef
 
 
-all: fractals brackets context_sensitive stochastic
+all: fractals brackets context_sensitive stochastic parametric
 
 pre-build:
 	@$(call color,4)
@@ -108,7 +108,13 @@ build-parametric: $(CORE_OBJ_FILES)
 	fi ;\
 	exit $$sta
 
-.PHONY: all clean pre-build post-build build-main main fractals build-fractals #tree2D build-tree2D
+.PHONY: all clean pre-build post-build build-main main \
+	fractals build-fractals \
+	brackets build-brackets \
+	stochastic build-stochastic \
+	context_sensitive build-context_sensitive \
+	parametric build-parametric \
+	#tree2D build-tree2D
 
 clean:
 	rm -f lsys bin_tree2D

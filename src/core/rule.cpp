@@ -41,7 +41,7 @@ namespace core
     {}
 
     Rule::Rule(const Module &pred, const std::vector<State> &successors,
-               const ContextChecker context_checker)
+               const ContextChecker &context_checker)
         : application{[=](const Module &pred_, const State &left,
                           const State &right) -> std::optional<State> {
             if (pred.letter != pred_.letter or not context_checker(left, right))

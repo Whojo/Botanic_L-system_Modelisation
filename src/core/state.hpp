@@ -16,6 +16,7 @@ namespace core
         State();
 
         std::vector<Module> get_modules() const;
+        std::string get_letters() const;
 
         State& operator+=(const State &rhs);
 

@@ -5,6 +5,7 @@
 #include <functional>
 #include <iostream>
 
+#include "../core/state.hpp"
 #include "drawer2D.hpp"
 
 using namespace cv;
