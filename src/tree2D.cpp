@@ -64,11 +64,13 @@ void turtle(Drawer &drawer, core::State sentence, double angle,
                     std::cerr << "Empty pop" << std::endl;
                 break;
             default:
-                drawer.draw_line(palette(c), thickness,
-                                 get_value_with_chaos(
-                                   ((params.size() == 0) ? length_controller(c) : params[0]),
-                                   length_chaos));
-        }
+                drawer.draw_line(
+                    palette(c), ((params.size() < 2) ? thickness : params[1]),
+                    get_value_with_chaos(((params.size() == 0)
+                                              ? length_controller(c)
+                                              : params[0]),
+                                         length_chaos));
+            }
     }
 }
 
@@ -186,17 +188,17 @@ int main()
 
     // // /* ----------------- */
 
-    // length = [](char c) {
-    //   if (c == 'G' or c == 'H')
-    //     return 3;
-    //   return 15;
-    // };
+    length = [](char c) {
+      if (c == 'G' or c == 'H')
+        return 0;
+      return 150;
+    };
     // drawer = Drawer(500, 1000, {620, 430});
     // std::string axiom_leaf = "HG";
-    // std::vector<core::Rule> productions_leaves = {
-    //   core::Rule{'G',  "G+[+G-G-G]-[-G+G+G]"},
-    //   core::Rule{'H',  "H-[-H+H+H]+[+H-H-H]"},
-    // };
+    std::vector<core::Rule> productions_leaves = {
+      core::Rule{'G',  "G+[+G-G-G]-[-G+G+G]"s},
+      core::Rule{'H',  "H-[-H+H+H]+[+H-H-H]"s},
+    };
 
     // core::LSystem lsys_leaves{ axiom_leaf, productions_leaves };
     // auto leaves = lsys_leaves.generate(4);
@@ -206,29 +208,53 @@ int main()
 
     // // /* ----------------- */
 
-    // // drawer = Drawer(500, 1000, {620, 430});
-    // drawer = Drawer("example/Background3.jpg", {620, 340});
+    // drawer = Drawer(500, 1000, {620, 430});
+    drawer = Drawer("example/Background3.jpg", {5000, 2750});
     // std::string axiom_g = "F[+G][--H]";
-    // // ** Alphabet **
-    // // F: Trunc base
-    // // L: Left branch
-    // // R: Right branch
-    // // G: Left leaves
-    // // H: Right leaves
-    // std::vector<core::Rule> productions_g_trunc = {
-    //   core::Rule{'F',  "F[+L][--R]"},
-    //   core::Rule{'G', std::vector<std::string>{"L[+G][-H]", "L[+G]"} },
-    //   core::Rule{'H', std::vector<std::string>{"R[+G][-H]", "R[-H]"} },
-    // };
+    int l = 150;
+    int thickness = 90;
+    core::State axiom_g = std::vector<core::Module>{{'F', {l, thickness}}};
+    // ** Alphabet **
+    // F: Trunc base
+    // L: Left branch
+    // R: Right branch
+    // G: Left leaves
+    // H: Right leaves
+    // const auto succ_g = std::vector<core::State>{"L[+G][-H]"s, "L[+G]"s};
+    // const auto succ_f = std::vector<core::State>{"R[+G][-H]"s, "R[-H]"s};
+    std::vector<core::Rule> productions_g_trunc = {
+      // core::Rule{'F', "F[+F][--F]"s}
+      core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('F' != pred_.letter)
+                return std::nullopt;
+            const auto t = pred_.params[1]; // Thickness
+            return std::vector<core::Module>{
+              {'F', {l, t}},
+              {'[', {}},
+              {'+', {}},
+              {'F', {l, t / 1.5f}},
+              {']', {}},
+              {'[', {}},
+              {'-', {}},
+              {'-', {}},
+              {'F', {l, t / 1.5f}},
+              {']', {}}
+          };
+      }}
+      // core::Rule{'F', "F[+L][--R]"s},
+      // core::Rule{'G', succ_g },
+      // core::Rule{'H', succ_f },
+    };
 
-    // core::LSystem lsys_trunc{ axiom_g, productions_g_trunc };
-    // auto trunc = lsys_trunc.generate(4);
+    core::LSystem lsys_trunc{ axiom_g, productions_g_trunc };
+    auto trunc = lsys_trunc.generate(5);
 
-    // core::LSystem lsys_tree{ trunc, productions_leaves };
+    core::LSystem lsys_tree{ trunc, productions_leaves };
     // auto tree = lsys_tree.generate(3);
 
-    // turtle(drawer, tree, pi / 12, length, [](char) -> Scalar {return {2, 4, 33};}, 2);
-    // drawer.write_img("example/g_example.png");
+    turtle(drawer, trunc, pi / 12, length, [](const char) -> Scalar {return {1, 6, 15};}, 90);
+    drawer.write_img("example/g_example.png");
 
     // /* ----------------- */
 
@@ -280,135 +306,135 @@ int main()
 
     /* ----------------- */
 
-    std::string axiom_param{"A"};
-    std::vector<core::Rule> productions_param = {
-      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-        -> std::optional<core::State> {
-            if ('A' != pred_.letter)
-                return std::nullopt;
-            return core::State{{
-              core::Module{'F', {20}},
-              core::Module{'[', {}},
-              core::Module{'+', {}},
-              core::Module{'A', {}},
-              core::Module{']', {}},
-              core::Module{'[', {}},
-              core::Module{'-', {}},
-              core::Module{'A', {}},
-              core::Module{']', {}}
-          }};
-      }},
-      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-        -> std::optional<core::State> {
-            if ('F' != pred_.letter)
-                return std::nullopt;
-            return core::State{{
-              core::Module{'F', {pred_.params[0] * 1.456}}
-          }};
-      }}
-    };
+    // std::string axiom_param{"A"};
+    // std::vector<core::Rule> productions_param = {
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('A' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{{
+    //           core::Module{'F', {20}},
+    //           core::Module{'[', {}},
+    //           core::Module{'+', {}},
+    //           core::Module{'A', {}},
+    //           core::Module{']', {}},
+    //           core::Module{'[', {}},
+    //           core::Module{'-', {}},
+    //           core::Module{'A', {}},
+    //           core::Module{']', {}}
+    //       }};
+    //   }},
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('F' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{{
+    //           core::Module{'F', {pred_.params[0] * 1.456}}
+    //       }};
+    //   }}
+    // };
 
-    core::LSystem lsys_param{ axiom_param, productions_param };
+    // core::LSystem lsys_param{ axiom_param, productions_param };
 
-    auto generated_param = lsys_param.generate(10);
+    // auto generated_param = lsys_param.generate(10);
 
-    double pi2 = pi / 2.1; // 85°
-    turtle(drawer, generated_param, pi2, length);
-    drawer.write_img("example/param_example.png");
+    // double pi2 = pi / 2.1; // 85°
+    // turtle(drawer, generated_param, pi2, length);
+    // drawer.write_img("example/param_example.png");
 
-    /* ----------------- */
+    // /* ----------------- */
 
-    height *= 3;
-    width *= 3;
-    base = height - 20;
-    starting = Point2d(width / 2.f, base);
+    // height *= 3;
+    // width *= 3;
+    // base = height - 20;
+    // starting = Point2d(width / 2.f, base);
 
-    drawer = Drawer(height, width, starting);
-    double pi14 = pi / 14;
-    int l = 30;
-    std::string axiom_branch{"F"};
-    std::vector<core::Rule> productions_branch = {
-      core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
-        -> std::optional<core::State> {
-            if ('F' != pred_.letter)
-                return std::nullopt;
-            return core::State{{
-              core::Module{'F', {l}},
-              core::Module{'F', {l}},
-              core::Module{'[', {}},
-              core::Module{'+', {}},
-              core::Module{'F', {l}},
-              core::Module{']', {}},
-              core::Module{'[', {}},
-              core::Module{'-', {}},
-              core::Module{'-', {}},
-              core::Module{'F', {l}},
-              core::Module{'F', {l}},
-              core::Module{']', {}},
-              core::Module{'[', {}},
-              core::Module{'-', {}},
-              core::Module{'F', {l}},
-              core::Module{'+', {}},
-              core::Module{'F', {l}},
-              core::Module{']', {}}
-          }};
-      }}
-    };
+    // drawer = Drawer(height, width, starting);
+    // double pi14 = pi / 14;
+    // int l = 30;
+    // std::string axiom_branch{"F"};
+    // std::vector<core::Rule> productions_branch = {
+    //   core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('F' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{{
+    //           core::Module{'F', {l}},
+    //           core::Module{'F', {l}},
+    //           core::Module{'[', {}},
+    //           core::Module{'+', {}},
+    //           core::Module{'F', {l}},
+    //           core::Module{']', {}},
+    //           core::Module{'[', {}},
+    //           core::Module{'-', {}},
+    //           core::Module{'-', {}},
+    //           core::Module{'F', {l}},
+    //           core::Module{'F', {l}},
+    //           core::Module{']', {}},
+    //           core::Module{'[', {}},
+    //           core::Module{'-', {}},
+    //           core::Module{'F', {l}},
+    //           core::Module{'+', {}},
+    //           core::Module{'F', {l}},
+    //           core::Module{']', {}}
+    //       }};
+    //   }}
+    // };
 
-    core::LSystem lsys_branch{ axiom_branch, productions_branch };
+    // core::LSystem lsys_branch{ axiom_branch, productions_branch };
 
-    auto generated_branch = lsys_branch.generate(5);
+    // auto generated_branch = lsys_branch.generate(5);
 
-    turtle(drawer, generated_branch, pi14, length,
-           [](const char) -> Scalar { return {30, 30, 30};}, 2,
-           0.4, 0.3);
-    drawer.write_img("example/branch_example.png");
+    // turtle(drawer, generated_branch, pi14, length,
+    //        [](const char) -> Scalar { return {30, 30, 30};}, 2,
+    //        0.4, 0.3);
+    // drawer.write_img("example/branch_example.png");
 
-    /* ----------------- */
+    // /* ----------------- */
 
-    drawer = Drawer(height, width, starting);
-    double pi15 = pi / 15;
-    std::string axiom_branch_2{"F"};
-    std::vector<core::Rule> productions_branch_2 = {
-      core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
-        -> std::optional<core::State> {
-            if ('F' != pred_.letter)
-                return std::nullopt;
-            return core::State{{
-              core::Module{'F', {l}},
-              core::Module{'[', {}},
-              core::Module{'-', {}},
-              core::Module{'F', {l}},
-              core::Module{'[', {}},
-              core::Module{'-', {}},
-              core::Module{'F', {l}},
-              core::Module{'+', {}},
-              core::Module{'+', {}},
-              core::Module{'F', {l}},
-              core::Module{']', {}},
-              core::Module{']', {}},
-              core::Module{'[', {}},
-              core::Module{'+', {}},
-              core::Module{'F', {l}},
-              core::Module{'[', {}},
-              core::Module{'-', {}},
-              core::Module{'-', {}},
-              core::Module{'F', {l}},
-              core::Module{']', {}},
-              core::Module{']', {}},
-              core::Module{'F', {l}},
-          }};
-      }}
-    };
+    // drawer = Drawer(height, width, starting);
+    // double pi15 = pi / 15;
+    // std::string axiom_branch_2{"F"};
+    // std::vector<core::Rule> productions_branch_2 = {
+    //   core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('F' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{{
+    //           core::Module{'F', {l}},
+    //           core::Module{'[', {}},
+    //           core::Module{'-', {}},
+    //           core::Module{'F', {l}},
+    //           core::Module{'[', {}},
+    //           core::Module{'-', {}},
+    //           core::Module{'F', {l}},
+    //           core::Module{'+', {}},
+    //           core::Module{'+', {}},
+    //           core::Module{'F', {l}},
+    //           core::Module{']', {}},
+    //           core::Module{']', {}},
+    //           core::Module{'[', {}},
+    //           core::Module{'+', {}},
+    //           core::Module{'F', {l}},
+    //           core::Module{'[', {}},
+    //           core::Module{'-', {}},
+    //           core::Module{'-', {}},
+    //           core::Module{'F', {l}},
+    //           core::Module{']', {}},
+    //           core::Module{']', {}},
+    //           core::Module{'F', {l}},
+    //       }};
+    //   }}
+    // };
 
-    core::LSystem lsys_branch_2{ axiom_branch_2, productions_branch_2 };
+    // core::LSystem lsys_branch_2{ axiom_branch_2, productions_branch_2 };
 
-    auto generated_branch_2 = lsys_branch_2.generate(5);
+    // auto generated_branch_2 = lsys_branch_2.generate(5);
 
-    turtle(drawer, generated_branch_2, pi15, length,
-           [](const char) -> Scalar { return {30, 30, 30};}, 2,
-           0.0, 0.8);
-    drawer.write_img("example/branch_2_example.png");
+    // turtle(drawer, generated_branch_2, pi15, length,
+    //        [](const char) -> Scalar { return {30, 30, 30};}, 2,
+    //        0.0, 0.8);
+    // drawer.write_img("example/branch_2_example.png");
 
     return 0;
 }
