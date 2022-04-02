@@ -17,10 +17,28 @@ using Palette = std::function<Scalar(char)>;
 using LengthController = std::function<double(char)>;
 
 
+float get_value_with_chaos(const float value, const float chaos)
+{
+    if (chaos == 0)
+      return value;
+
+    const auto per_cent_chaos = chaos * 100;
+    const auto per_cent_chaos_variation = std::rand() % (int) (2 * per_cent_chaos);
+    const auto variation = per_cent_chaos_variation / 100.0f - chaos;
+
+    return value * (1 + variation);
+}
+
+// `angle_chaos` and `length_chaos` are pourcentage of allowed variation on,
+// respectively the default angle and length
+// e.g. an `angle_chaos` = 0.20 will allow a 20% variation of the angle
+// both positively and negatively
 void turtle(Drawer &drawer, core::State sentence, double angle,
             LengthController length_controller,
             Palette palette = [](const char) -> Scalar { return {0, 0, 0};},
-            const int thickness = 2)
+            const int thickness = 2,
+            const float angle_chaos = 0,
+            const float length_chaos = 0)
 {
     for (const auto &mod : sentence.get_modules())
     {
@@ -31,10 +49,12 @@ void turtle(Drawer &drawer, core::State sentence, double angle,
             case 'X':
                 break;
             case '+':
-                drawer.add_angle((params.size() == 0) ? angle : params[0]);
+                drawer.add_angle(get_value_with_chaos(((params.size() == 0) ? angle : params[0]),
+                                 angle_chaos));
                 break;
             case '-':
-                drawer.add_angle((params.size() == 0) ? -angle : -params[0]);
+                drawer.add_angle(get_value_with_chaos(((params.size() == 0) ? -angle : -params[0]),
+                                 angle_chaos));
                 break;
             case '[':
                 drawer.push_state();
@@ -45,7 +65,9 @@ void turtle(Drawer &drawer, core::State sentence, double angle,
                 break;
             default:
                 drawer.draw_line(palette(c), thickness,
-                                 (params.size() == 0) ? length_controller(c) : params[0]);
+                                 get_value_with_chaos(
+                                   ((params.size() == 0) ? length_controller(c) : params[0]),
+                                   length_chaos));
         }
     }
 }
@@ -293,6 +315,100 @@ int main()
     double pi2 = pi / 2.1; // 85°
     turtle(drawer, generated_param, pi2, length);
     drawer.write_img("example/param_example.png");
+
+    /* ----------------- */
+
+    height *= 3;
+    width *= 3;
+    base = height - 20;
+    starting = Point2d(width / 2.f, base);
+
+    drawer = Drawer(height, width, starting);
+    double pi14 = pi / 14;
+    int l = 30;
+    std::string axiom_branch{"F"};
+    std::vector<core::Rule> productions_branch = {
+      core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('F' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+              core::Module{'F', {l}},
+              core::Module{'F', {l}},
+              core::Module{'[', {}},
+              core::Module{'+', {}},
+              core::Module{'F', {l}},
+              core::Module{']', {}},
+              core::Module{'[', {}},
+              core::Module{'-', {}},
+              core::Module{'-', {}},
+              core::Module{'F', {l}},
+              core::Module{'F', {l}},
+              core::Module{']', {}},
+              core::Module{'[', {}},
+              core::Module{'-', {}},
+              core::Module{'F', {l}},
+              core::Module{'+', {}},
+              core::Module{'F', {l}},
+              core::Module{']', {}}
+          }};
+      }}
+    };
+
+    core::LSystem lsys_branch{ axiom_branch, productions_branch };
+
+    auto generated_branch = lsys_branch.generate(5);
+
+    turtle(drawer, generated_branch, pi14, length,
+           [](const char) -> Scalar { return {30, 30, 30};}, 2,
+           0.4, 0.3);
+    drawer.write_img("example/branch_example.png");
+
+    /* ----------------- */
+
+    drawer = Drawer(height, width, starting);
+    double pi15 = pi / 15;
+    std::string axiom_branch_2{"F"};
+    std::vector<core::Rule> productions_branch_2 = {
+      core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('F' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+              core::Module{'F', {l}},
+              core::Module{'[', {}},
+              core::Module{'-', {}},
+              core::Module{'F', {l}},
+              core::Module{'[', {}},
+              core::Module{'-', {}},
+              core::Module{'F', {l}},
+              core::Module{'+', {}},
+              core::Module{'+', {}},
+              core::Module{'F', {l}},
+              core::Module{']', {}},
+              core::Module{']', {}},
+              core::Module{'[', {}},
+              core::Module{'+', {}},
+              core::Module{'F', {l}},
+              core::Module{'[', {}},
+              core::Module{'-', {}},
+              core::Module{'-', {}},
+              core::Module{'F', {l}},
+              core::Module{']', {}},
+              core::Module{']', {}},
+              core::Module{'F', {l}},
+          }};
+      }}
+    };
+
+    core::LSystem lsys_branch_2{ axiom_branch_2, productions_branch_2 };
+
+    auto generated_branch_2 = lsys_branch_2.generate(5);
+
+    turtle(drawer, generated_branch_2, pi15, length,
+           [](const char) -> Scalar { return {30, 30, 30};}, 2,
+           0.0, 0.8);
+    drawer.write_img("example/branch_2_example.png");
 
     return 0;
 }
