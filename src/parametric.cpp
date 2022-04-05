@@ -84,7 +84,7 @@ int main() {
           }};
       }},
       core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-        -> std::optional<core::State> {
+    -> std::optional<core::State> {
             if ('F' != pred_.letter)
                 return std::nullopt;
             return core::State{{

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "rule.hpp"
+#include "core/rule.hpp"
 
 
 namespace core

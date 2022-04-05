@@ -6,8 +6,8 @@
 #include <vector>
 #include <memory>
 
-#include "module.hpp"
-#include "state.hpp"
+#include "core/module.hpp"
+#include "core/state.hpp"
 
 
 using ostr = std::optional<std::string>;

@@ -1,5 +1,4 @@
-#include "turtle.hpp"
-
+#include "utils/turtle.hpp"
 
 void turtle2D(Drawer &drawer, std::string sentence, double angle,
             LengthController length_controller, Palette palette,
@@ -56,36 +55,27 @@ std::vector<double> Turtle3::RH(const double &angle)
                                 0, s, c, };
 }
 
-inline Vector3 rotate(const std::vector<double> &rot_mat, const Vector3 &v)
+Turtle3::Turtle3(const double &fixed_angle)
 {
-    return Vector3(v.x * rot_mat[0] + v.y * rot_mat[3] + v.z * rot_mat[6],
-                   v.x * rot_mat[1] + v.y * rot_mat[4] + v.z * rot_mat[7],
-                   v.x * rot_mat[2] + v.y * rot_mat[5] + v.z * rot_mat[8]);
+    this->fixed_angle = fixed_angle;
+    state = TurtleState{Vector3{0,1,0}, Vector3{0,0,0}};
+}
+Turtle3::Turtle3(const Vector3 &start, const double &fixed_angle)
+{
+    this->fixed_angle = fixed_angle;
+    state = TurtleState{Vector3{0,1,0}, start};
 }
 
-inline void Turtle3::push_state()
-{
-    stack.push_front(TurtleState{state.rotation, state.position});
-}
-inline bool Turtle3::pop_state()
-{
-    if (!stack.empty())
-    {
-        // pop_front return void :c
-        state = stack.front();
-        stack.pop_front();
-        return true;
-    }
-    return false;
-}
-
-std::vector<Vector3> Turtle3::compute(const Vector3 &start,const core::State &sentence,
+std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::string &ignore,
+            std::vector<std::vector<size_t>> &faces,
             const LengthController &length,
             const Palette &palette,
             const int &thickness)
 {
-    std::vector<Vector3> points{ start };
-    Vector3 current_point = start;
+    std::vector<Vector3> points{ state.position };
+    std::deque<size_t> face_index_stack;
+    size_t former_index = 1;
+    size_t index = 2;
     for (size_t i = 0; i < sentence.get_modules().size(); i++)
     {
             core::Module mod = sentence.get_modules()[i];
@@ -96,61 +86,93 @@ std::vector<Vector3> Turtle3::compute(const Vector3 &start,const core::State &se
                 case '+':
                 {
                     std::vector<double> ru = RU(mod.params.size() == 1 ? mod.params[0] : fixed_angle);
-                    state.rotation = rotate(ru, state.rotation);
+                    state.rotation = state.rotation.rotate(ru);
                     break;
                 }
                 case '-':
                 {
                     std::vector<double> ru = RU(-fixed_angle);
-                    state.rotation = rotate(ru, state.rotation);
+                    state.rotation = state.rotation.rotate(ru);
                     break;
                 }
                 case '&':
                 {
                     std::vector<double> rl = RL(mod.params.size() == 1 ? mod.params[0] : fixed_angle);
-                    state.rotation = rotate(rl, state.rotation);
+                    state.rotation = state.rotation.rotate(rl);
                     break;
                 }
                 case '^':
                 {
                     std::vector<double> rl = RL(-fixed_angle);
-                    state.rotation = rotate(rl, state.rotation);
+                    state.rotation = state.rotation.rotate(rl);
                     break;
                 }
                 case '\\':
                 {
                     std::vector<double> rh = RH(fixed_angle);
-                    state.rotation = rotate(rh, state.rotation);
+                    state.rotation = state.rotation.rotate(rh);
                     break;
                 }
                 case '/':
                 {
                     std::vector<double> rh = RH(mod.params.size() == 1 ? mod.params[0] : -fixed_angle);
-                    state.rotation = rotate(rh, state.rotation);
+                    state.rotation = state.rotation.rotate(rh);
                     break;
                 }
                 case '|':
                 {
                     std::vector<double> ru = RU(pi); // 180°
-                    state.rotation = rotate(ru, state.rotation);
+                    state.rotation = state.rotation.rotate(ru);
                     break;
                 }
                 case '[':
+                {
+                    face_index_stack.push_front(former_index);
                     push_state();
                     break;
+                }
                 case ']':
+                {
+                    former_index = face_index_stack.front();
+                    face_index_stack.pop_front();
                     if (!pop_state())
                         std::cerr << "Empty pop" << std::endl;
                     break;
+                }
                 default:
                 {
-                    double len = (mod.params.size()) ? mod.params[0] : length(mod.letter) ;
-                    current_point = current_point + (state.rotation * len);
-                    points.emplace_back(TurtleState{state.rotation, current_point});
+                    if (ignore.find(mod.letter) != std::string::npos)
+                        break;
+                    double len = (mod.params.size()) ? mod.params[0] : length(mod.letter);
+                    state.position = state.position + (state.rotation * len);
+                    points.emplace_back(state.position);
+                    faces.emplace_back(std::vector<size_t>{former_index, index});
+                    former_index = index;
+                    index += 1;
                     break;
                 }
             }
-            state = TurtleState{state.rotation, current_point};
     }
     return points;
+}
+
+void Turtle3::create_obj_file(const std::string &filename,
+                              const std::vector<Vector3> &pts,
+                              const std::vector<std::vector<size_t>> &faces)
+{
+    std::ofstream os(filename.c_str());
+    if (os)
+    {
+        for (const Vector3 &pt : pts)
+            os << "v " << std::setprecision(7) << pt.x << " " << pt.y << " " << pt.z << std::endl; 
+        for (const std::vector<size_t> face : faces)
+        {
+            os << "f";
+            for (const size_t vector_index : face)
+                os << " " << vector_index;
+            os << std::endl;
+        }
+    }
+    else
+        std::cerr << "Failed to open " << filename << std::endl;
 }

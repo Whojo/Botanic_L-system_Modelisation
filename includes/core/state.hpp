@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "module.hpp"
+#include "core/module.hpp"
 
 
 namespace core

@@ -10,8 +10,8 @@ CC = g++
 CORE_CPP_FILES = core/l_system.cpp core/rule.cpp core/module.cpp core/state.cpp
 CORE_OBJ_FILES = $(CORE_CPP_FILES:.cpp=.o)
 
-UTILS_CPP_FILES = utils/turtle.cpp utils/drawer2D.cpp
-# UTILS_OBJ_FILES = $(UTILS_CPP_FILES:.cpp=.o)
+UTILS_CPP_FILES = utils/turtle.cpp utils/drawer2D.cpp utils/vector3.cpp 
+UTILS_OBJ_FILES = $(UTILS_CPP_FILES:.cpp=.o)
 
 CXX_FLAGS += -Wall -Wextra -O3 -g -std=c++20
 CXX_FLAGS += -lm
@@ -91,11 +91,17 @@ build-parametric: $(CORE_OBJ_FILES)
 	@mkdir -p output/parametric
 	$(CC) parametric.cpp $(UTILS_CPP_FILES) -o build/parametric $(CORE_OBJ_FILES) $(CXX_FLAGS) $(LIBS)
 
+tree3d: pre-build build-tree3d post-build
+
+tree3d: $(CORE_OBJ_FILES)
+	@mkdir -p output/3d
+	$(CC) tree3d.cpp $(UTILS_CPP_FILES) -o build/tree3d $(CORE_OBJ_FILES) $(CXX_FLAGS) $(LIBS)
+
 %.o: %.cpp %.hpp
 	@$(call color,2)
 	@echo "[$@] $(CXX_FLAGS)"
 	@$(call default_color)
-	@$(CC) -c -o $@ $< $(CXX_FLAGS) ; \
+	@$(CC) -c -o $@ $< $(UTILS_CPP_FILES) $(CXX_FLAGS) $(LIBS); \
 	sta=$$?;	  \
 	if [ $$sta -eq 0 ]; then  \
 	  $(call color,2) ; \
@@ -114,6 +120,7 @@ build-parametric: $(CORE_OBJ_FILES)
 	stochastic build-stochastic \
 	context_sensitive build-context_sensitive \
 	parametric build-parametric \
+	tree3d build-tree3d \
 	#tree2D build-tree2D
 
 clean:

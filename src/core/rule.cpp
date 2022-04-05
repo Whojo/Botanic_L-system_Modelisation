@@ -1,4 +1,4 @@
-#include "rule.hpp"
+#include "core/rule.hpp"
 
 #include <random>
 
