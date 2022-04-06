@@ -58,12 +58,12 @@ std::vector<double> Turtle3::RH(const double &angle)
 Turtle3::Turtle3(const double &fixed_angle)
 {
     this->fixed_angle = fixed_angle;
-    state = TurtleState{Vector3{0,1,0}, Vector3{0,0,0}};
+    state = TurtleState{Vector3{0,0,1}, Vector3{0,0,0}};
 }
 Turtle3::Turtle3(const Vector3 &start, const double &fixed_angle)
 {
     this->fixed_angle = fixed_angle;
-    state = TurtleState{Vector3{0,1,0}, start};
+    state = TurtleState{Vector3{0,0,1}, start};
 }
 
 std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::string &ignore,
