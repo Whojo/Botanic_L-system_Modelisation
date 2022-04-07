@@ -17,6 +17,15 @@ using Palette = std::function<Scalar(char)>;
 using LengthController = std::function<double(char)>;
 
 
+namespace
+{
+    core::State select_randomly(const std::vector<core::State> &states)
+    {
+        return states[std::rand() % states.size()];
+
+    }
+} // namespace
+
 float get_value_with_chaos(const float value, const float chaos)
 {
     if (chaos == 0)
@@ -213,7 +222,18 @@ int main()
     // std::string axiom_g = "F[+G][--H]";
     int l = 150;
     int thickness = 90;
-    core::State axiom_g = std::vector<core::Module>{{'F', {l, thickness}}};
+    core::State axiom_g = std::vector<core::Module>{
+      {'T', {l, thickness}},
+      {'[', {}},
+      {'+', {}},
+      {'G', {l, thickness / 1.5f}},
+      {']', {}},
+      {'[', {}},
+      {'-', {}},
+      {'-', {}},
+      {'H', {l, thickness / 1.5f}},
+      {']', {}}
+    };
     // ** Alphabet **
     // F: Trunc base
     // L: Left branch
@@ -223,7 +243,6 @@ int main()
     // const auto succ_g = std::vector<core::State>{"L[+G][-H]"s, "L[+G]"s};
     // const auto succ_f = std::vector<core::State>{"R[+G][-H]"s, "R[-H]"s};
     std::vector<core::Rule> productions_g_trunc = {
-      // core::Rule{'F', "F[+F][--F]"s}
       core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
         -> std::optional<core::State> {
             if ('F' != pred_.letter)
@@ -233,14 +252,69 @@ int main()
               {'F', {l, t}},
               {'[', {}},
               {'+', {}},
-              {'F', {l, t / 1.5f}},
+              {'L', {l, t / 1.5f}},
               {']', {}},
               {'[', {}},
               {'-', {}},
               {'-', {}},
-              {'F', {l, t / 1.5f}},
+              {'R', {l, t / 1.5f}},
               {']', {}}
           };
+      }},
+
+      core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('G' != pred_.letter)
+                return std::nullopt;
+            const auto t = pred_.params[1]; // Thickness
+            return select_randomly({std::vector<core::Module>{
+                {'L', {l, t}},
+                {'[', {}},
+                {'+', {}},
+                {'G', {l, t / 1.5f}},
+                {']', {}},
+                {'[', {}},
+                {'-', {}},
+                {'-', {}},
+                {'H', {l, t / 1.5f}},
+                {']', {}}
+              },
+              std::vector<core::Module>{
+                {'L', {l, t}},
+                {'[', {}},
+                {'+', {}},
+                {'G', {l, t / 1.5f}},
+                {']', {}},
+              }
+            });
+      }},
+
+      core::Rule{[=](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('H' != pred_.letter)
+                return std::nullopt;
+            const auto t = pred_.params[1]; // Thickness
+            return select_randomly({std::vector<core::Module>{
+                {'R', {l, t}},
+                {'[', {}},
+                {'+', {}},
+                {'G', {l, t / 1.5f}},
+                {']', {}},
+                {'[', {}},
+                {'-', {}},
+                {'-', {}},
+                {'H', {l, t / 1.5f}},
+                {']', {}}
+              },
+              std::vector<core::Module>{
+                {'R', {l, t}},
+                {'[', {}},
+                {'-', {}},
+                {'-', {}},
+                {'H', {l, t / 1.5f}},
+                {']', {}},
+              }
+            });
       }}
       // core::Rule{'F', "F[+L][--R]"s},
       // core::Rule{'G', succ_g },
@@ -253,7 +327,7 @@ int main()
     core::LSystem lsys_tree{ trunc, productions_leaves };
     // auto tree = lsys_tree.generate(3);
 
-    turtle(drawer, trunc, pi / 12, length, [](const char) -> Scalar {return {1, 6, 15};}, 90);
+    turtle(drawer, trunc, pi / 15, length, [](const char) -> Scalar {return {1, 6, 15};}, 90, 0.4, 0.4);
     drawer.write_img("example/g_example.png");
 
     // /* ----------------- */
