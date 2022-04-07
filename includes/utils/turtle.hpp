@@ -50,7 +50,7 @@ public:
             const int &thickness = 2);
 
 private:
-    double fixed_angle; // used when no parameters given
+    double fixed_angle; // used for non-parametric l-systems
     TurtleState state;
     std::deque<TurtleState> stack;
 };
