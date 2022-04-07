@@ -23,7 +23,7 @@ void turtle2D(Drawer &drawer, std::string sentence, double angle,
 
 struct TurtleState
 {
-    Vector3 rotation;
+    std::vector<Vector3> rotation;
     Vector3 position;
 };
 
@@ -31,7 +31,6 @@ class Turtle3
 {
 public:
     Turtle3(const double &fixed_angle);
-    Turtle3(const Vector3 &start, const double &fixed_angle);
 
     std::vector<double> RU(const double &angle);
     std::vector<double> RL(const double &angle);

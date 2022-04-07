@@ -58,12 +58,14 @@ std::vector<double> Turtle3::RH(const double &angle)
 Turtle3::Turtle3(const double &fixed_angle)
 {
     this->fixed_angle = fixed_angle;
-    state = TurtleState{Vector3{-1,0,0}, Vector3{0,0,0}};
-}
-Turtle3::Turtle3(const Vector3 &direction, const double &fixed_angle)
-{
-    this->fixed_angle = fixed_angle;
-    state = TurtleState{direction, Vector3{0,0,0}};
+    state = TurtleState{
+        std::vector<Vector3>{
+            {0, 0, 1},
+            {0, 1, 0},
+            {-1, 0, 0}
+        },
+        Vector3{0,0,0}
+    };
 }
 
 std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::string &ignore,
@@ -86,43 +88,71 @@ std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::st
                 case '+':
                 {
                     std::vector<double> ru = RU(mod.params.size() == 1 ? mod.params[0] : fixed_angle);
-                    state.rotation = state.rotation.rotate(ru);
+                    state.rotation = {
+                        state.rotation[0].rotate(ru),
+                        state.rotation[1].rotate(ru),
+                        state.rotation[2].rotate(ru)
+                    };
                     break;
                 }
                 case '-':
                 {
                     std::vector<double> ru = RU(-fixed_angle);
-                    state.rotation = state.rotation.rotate(ru);
+                    state.rotation = {
+                        state.rotation[0].rotate(ru),
+                        state.rotation[1].rotate(ru),
+                        state.rotation[2].rotate(ru)
+                    };
                     break;
                 }
                 case '&':
                 {
                     std::vector<double> rl = RL(mod.params.size() == 1 ? mod.params[0] : fixed_angle);
-                    state.rotation = state.rotation.rotate(rl);
+                    state.rotation = {
+                        state.rotation[0].rotate(rl),
+                        state.rotation[1].rotate(rl),
+                        state.rotation[2].rotate(rl)
+                    };
                     break;
                 }
                 case '^':
                 {
                     std::vector<double> rl = RL(-fixed_angle);
-                    state.rotation = state.rotation.rotate(rl);
+                    state.rotation = {
+                        state.rotation[0].rotate(rl),
+                        state.rotation[1].rotate(rl),
+                        state.rotation[2].rotate(rl)
+                    };
                     break;
                 }
                 case '\\':
                 {
                     std::vector<double> rh = RH(fixed_angle);
-                    state.rotation = state.rotation.rotate(rh);
+                    state.rotation = {
+                        state.rotation[0].rotate(rh),
+                        state.rotation[1].rotate(rh),
+                        state.rotation[2].rotate(rh)
+                    };
                     break;
                 }
                 case '/':
                 {
                     std::vector<double> rh = RH(mod.params.size() == 1 ? mod.params[0] : -fixed_angle);
-                    state.rotation = state.rotation.rotate(rh);
+                    state.rotation = {
+                        state.rotation[0].rotate(rh),
+                        state.rotation[1].rotate(rh),
+                        state.rotation[2].rotate(rh)
+                    };
                     break;
                 }
                 case '|':
                 {
                     std::vector<double> ru = RU(pi); // 180°
-                    state.rotation = state.rotation.rotate(ru);
+                    state.rotation = {
+                        state.rotation[0].rotate(ru),
+                        state.rotation[1].rotate(ru),
+                        state.rotation[2].rotate(ru)
+                    };
                     break;
                 }
                 case '[':
@@ -144,7 +174,7 @@ std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::st
                     if (ignore.find(mod.letter) != std::string::npos)
                         break;
                     double len = (mod.params.size()) ? mod.params[0] : length(mod.letter);
-                    state.position = state.position + (state.rotation * len);
+                    state.position = state.position + (state.rotation[2] * len);
                     points.emplace_back(state.position);
                     faces.emplace_back(std::vector<size_t>{former_index, index});
                     former_index = index;

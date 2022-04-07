@@ -222,7 +222,7 @@ int main()
 
     auto generated_hilbert = lsys_hilbert.generate(1);
     std::cout << generated_hilbert.get_letters() << std::endl;
-    Turtle3 turtle_hilbert({-1, 0, 0}, pi / 2);
+    Turtle3 turtle_hilbert(pi / 2);
     std::vector<std::vector<size_t>> faces_hilbert;
     // core::State test{"F/F\\FFF\\F/F&F^F/F\\&&FFF\\F\\F--"};
     auto pts_hilbert = turtle_hilbert.compute(generated_hilbert, "ABCD", faces_hilbert);
