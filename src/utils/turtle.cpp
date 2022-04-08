@@ -217,11 +217,6 @@ void Turtle3::to_cylinder(const double &radius, const size_t &discretisation,
         size_t i2 = face[1];
         Vector3 v1 = pts[i1 - 1];
         Vector3 v2 = pts[i2 - 1];
-        std::cout << "i1: " << i1 << std::endl;
-        std::cout << "i2: " << i2 << std::endl;
-        std::cout << "v1: " << v1.x << " " << v1.y << " " << v1.z << std::endl;
-        std::cout << "v2: " << v2.x << " " << v2.y << " " << v2.z << std::endl;
-        std::cout << std::endl;
         Vector3 dir = (v2 - v1).normalize();
         Vector3 pdir = dir.cross({dir.x + pi, dir.y + pi, dir.z + pi}).normalize();
         std::vector<Vector3> rot= {
@@ -229,17 +224,6 @@ void Turtle3::to_cylinder(const double &radius, const size_t &discretisation,
             pdir,
             dir.cross(pdir).normalize(),
         };
-        if (std::isnan(dir.x) || std::isnan(pdir.x))
-        {
-            std::cerr << "i1 = " << i1 << " | i2 = " << i2 << std::endl;
-            std::cerr << "v1: v " << v1.x << " " << v1.y << " " << v1.z << std::endl;
-            std::cerr << "v2: v " << v2.x << " " << v2.y << " " << v2.z << std::endl;
-            std::cerr << "dir: v " << dir.x << " " << dir.y << " " << dir.z << std::endl;
-            Vector3 bnorm_pdir = dir.cross({dir.x, dir.y, dir.z + 2});
-            std::cerr << "before norm bnorm_pdir: v " << bnorm_pdir.x << " " << bnorm_pdir.y << " " << bnorm_pdir.z << std::endl;
-            std::cerr << "pdir: v " << pdir.x << " " << pdir.y << " " << pdir.z << std::endl;
-            std::cerr << "rot[2]: v " << rot[2].x << " " << rot[2].y << " " << rot[2].z << std::endl;
-        }
         double angle = pi / discretisation;
         Vector3 former1 = v1 + (rot[2] * radius);
         Vector3 former2 = v2 + (rot[2] * radius);
