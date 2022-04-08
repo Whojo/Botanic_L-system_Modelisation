@@ -1,4 +1,5 @@
 #include "utils/turtle.hpp"
+#include <cmath>
 
 void turtle2D(Drawer &drawer, std::string sentence, double angle,
             LengthController length_controller, Palette palette,
@@ -203,36 +204,53 @@ void Turtle3::create_obj_file(const std::string &filename,
         std::cerr << "Failed to open " << filename << std::endl;
 }
 
-void Turtle3::to_cylinder(const size_t &radius, const size_t &discretisation,
+void Turtle3::to_cylinder(const double &radius, const size_t &discretisation,
                           std::vector<Vector3> &pts,
                           std::vector<std::vector<size_t>> &faces)
 {
     std::vector<Vector3> new_pts;
     std::vector<std::vector<size_t>> new_faces;
+    size_t new_y = 1;
     for (const auto &face : faces)
     {
         size_t i1 = face[0];
         size_t i2 = face[1];
-        Vector3 v1 = pts[i1];
-        Vector3 v2 = pts[i2];
+        Vector3 v1 = pts[i1 - 1];
+        Vector3 v2 = pts[i2 - 1];
+        std::cout << "i1: " << i1 << std::endl;
+        std::cout << "i2: " << i2 << std::endl;
+        std::cout << "v1: " << v1.x << " " << v1.y << " " << v1.z << std::endl;
+        std::cout << "v2: " << v2.x << " " << v2.y << " " << v2.z << std::endl;
+        std::cout << std::endl;
         Vector3 dir = (v2 - v1).normalize();
-        Vector3 pdir = dir.cross({dir.x, dir.y, dir.z + 2}).normalize();
+        Vector3 pdir = dir.cross({dir.x + pi, dir.y + pi, dir.z + pi}).normalize();
         std::vector<Vector3> rot= {
             dir,
             pdir,
             dir.cross(pdir).normalize(),
         };
+        if (std::isnan(dir.x) || std::isnan(pdir.x))
+        {
+            std::cerr << "i1 = " << i1 << " | i2 = " << i2 << std::endl;
+            std::cerr << "v1: v " << v1.x << " " << v1.y << " " << v1.z << std::endl;
+            std::cerr << "v2: v " << v2.x << " " << v2.y << " " << v2.z << std::endl;
+            std::cerr << "dir: v " << dir.x << " " << dir.y << " " << dir.z << std::endl;
+            Vector3 bnorm_pdir = dir.cross({dir.x, dir.y, dir.z + 2});
+            std::cerr << "before norm bnorm_pdir: v " << bnorm_pdir.x << " " << bnorm_pdir.y << " " << bnorm_pdir.z << std::endl;
+            std::cerr << "pdir: v " << pdir.x << " " << pdir.y << " " << pdir.z << std::endl;
+            std::cerr << "rot[2]: v " << rot[2].x << " " << rot[2].y << " " << rot[2].z << std::endl;
+        }
         double angle = pi / discretisation;
-        Vector3 former1 = v1 + (rot[1] * radius);
-        Vector3 former2 = v2 + (rot[1] * radius);
+        Vector3 former1 = v1 + (rot[2] * radius);
+        Vector3 former2 = v2 + (rot[2] * radius);
         new_pts.emplace_back(former1);
         new_pts.emplace_back(former2);
-        size_t y = 1;
+        size_t y = new_y;
         for (size_t i = 1; i < discretisation * 2; i++, y+=2)
         {
             rotate(rot, RH(angle));
-            Vector3 new1 = v1 + (rot[1] * radius);
-            Vector3 new2 = v2 + (rot[1] * radius);
+            Vector3 new1 = v1 + (rot[2] * radius);
+            Vector3 new2 = v2 + (rot[2] * radius);
             new_pts.emplace_back(new1);
             new_pts.emplace_back(new2);
             new_faces.emplace_back(std::vector<size_t>{y, y+1, y+3, y+2});
@@ -240,7 +258,8 @@ void Turtle3::to_cylinder(const size_t &radius, const size_t &discretisation,
             former2 = new2;
         }
         size_t max_index = discretisation * 4;
-        new_faces.emplace_back(std::vector<size_t>{y, y+1, (y+3) % max_index, (y+2) % max_index});
+        new_faces.emplace_back(std::vector<size_t>{y, y+1, new_y + 1, new_y});
+        new_y += max_index;
     }
     pts = new_pts;
     faces = new_faces;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 #include <vector>
 
 class Vector3
@@ -47,6 +48,8 @@ Vector3 Vector3::operator-() const
 Vector3 Vector3::normalize() const
 {
     double norme = norm();
+    if (norme < 1e-6)
+        std::cerr << "normalize error div 0" << std::endl;
     return Vector3(x / norme, y / norme, z / norme);
 }
 bool Vector3::operator==(const Vector3 &v) const
