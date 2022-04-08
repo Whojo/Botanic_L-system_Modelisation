@@ -80,6 +80,16 @@ namespace
                                 x * rot_mat[1] + y * rot_mat[4] + z * rot_mat[7],
                                 x * rot_mat[2] + y * rot_mat[5] + z * rot_mat[8] };
     }
+    double non_null_coordinate(const Vector3 &v)
+    {
+        double value = 0;
+        double epsilon = 1e-6;
+        if (v.x > epsilon)
+            return v.x;
+        if (v.y > epsilon)
+            return v.y;
+        return v.z;
+    }
 }
 
 std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::string &ignore,
@@ -191,4 +201,47 @@ void Turtle3::create_obj_file(const std::string &filename,
     }
     else
         std::cerr << "Failed to open " << filename << std::endl;
+}
+
+void Turtle3::to_cylinder(const size_t &radius, const size_t &discretisation,
+                          std::vector<Vector3> &pts,
+                          std::vector<std::vector<size_t>> &faces)
+{
+    std::vector<Vector3> new_pts;
+    std::vector<std::vector<size_t>> new_faces;
+    for (const auto &face : faces)
+    {
+        size_t i1 = face[0];
+        size_t i2 = face[1];
+        Vector3 v1 = pts[i1];
+        Vector3 v2 = pts[i2];
+        Vector3 dir = (v2 - v1).normalize();
+        Vector3 pdir = dir.cross({dir.x, dir.y, dir.z + 2}).normalize();
+        std::vector<Vector3> rot= {
+            dir,
+            pdir,
+            dir.cross(pdir).normalize(),
+        };
+        double angle = pi / discretisation;
+        Vector3 former1 = v1 + (rot[1] * radius);
+        Vector3 former2 = v2 + (rot[1] * radius);
+        new_pts.emplace_back(former1);
+        new_pts.emplace_back(former2);
+        size_t y = 1;
+        for (size_t i = 1; i < discretisation * 2; i++, y+=2)
+        {
+            rotate(rot, RH(angle));
+            Vector3 new1 = v1 + (rot[1] * radius);
+            Vector3 new2 = v2 + (rot[1] * radius);
+            new_pts.emplace_back(new1);
+            new_pts.emplace_back(new2);
+            new_faces.emplace_back(std::vector<size_t>{y, y+1, y+3, y+2});
+            former1 = new1;
+            former2 = new2;
+        }
+        size_t max_index = discretisation * 4;
+        new_faces.emplace_back(std::vector<size_t>{y, y+1, (y+3) % max_index, (y+2) % max_index});
+    }
+    pts = new_pts;
+    faces = new_faces;
 }

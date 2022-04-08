@@ -42,6 +42,9 @@ public:
     void create_obj_file(const std::string &filename,
                          const std::vector<Vector3> &pts,
                          const std::vector<std::vector<size_t>> &faces);
+    // convert edges to cylinder
+    void to_cylinder(const size_t &radius, const size_t &discretisation,std::vector<Vector3> &pts,
+                     std::vector<std::vector<size_t>> &faces);
     std::vector<Vector3> compute(const core::State &sentence, const std::string &ignore,
             std::vector<std::vector<size_t>> &faces,
             const LengthController &length = [](const char) -> double {return 1;},
