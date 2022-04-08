@@ -220,7 +220,7 @@ int main()
     
     core::LSystem lsys_hilbert{ axiom_hilbert, productions_hilbert };
 
-    auto generated_hilbert = lsys_hilbert.generate(1);
+    auto generated_hilbert = lsys_hilbert.generate(3);
     std::cout << generated_hilbert.get_letters() << std::endl;
     Turtle3 turtle_hilbert(pi / 2);
     std::vector<std::vector<size_t>> faces_hilbert;

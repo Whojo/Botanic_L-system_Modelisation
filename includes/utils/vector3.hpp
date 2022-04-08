@@ -23,8 +23,6 @@ public:
     inline Vector3 cross(const Vector3 &v) const;
     inline double norm() const;
 
-    inline Vector3 rotate(const std::vector<double> &rot_mat);
-
 public:
     double x;
     double y;
@@ -72,10 +70,4 @@ Vector3 Vector3::cross(const Vector3 &v) const
 double Vector3::norm() const
 {
     return std::sqrt(x * x + y * y + z * z);
-}
-Vector3 Vector3::rotate(const std::vector<double> &rot_mat)
-{
-    return Vector3(x * rot_mat[0] + y * rot_mat[3] + z * rot_mat[6],
-                   x * rot_mat[1] + y * rot_mat[4] + z * rot_mat[7],
-                   x * rot_mat[2] + y * rot_mat[5] + z * rot_mat[8]);
 }
