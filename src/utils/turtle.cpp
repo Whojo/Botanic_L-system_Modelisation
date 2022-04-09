@@ -101,8 +101,12 @@ namespace
         }
 
         std::vector<size_t> face;
+        face.emplace_back(start++);
         for (; start <= end; start++)
+        {
             face.emplace_back(start);
+            faces.pop_back(); // Removed edges of the surface
+        }
 
         faces.emplace_back(face);
     }
@@ -170,21 +174,29 @@ std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::st
                 }
                 case '[':
                 {
-                    starting_face_id = former_index;
                     face_index_stack.push_front(former_index);
                     push_state();
                     break;
                 }
                 case ']':
                 {
-                    if (starting_face_id.has_value())
-                        add_surface_to_faces(faces, starting_face_id.value(), former_index);
-
-                    starting_face_id = std::nullopt;
                     former_index = face_index_stack.front();
                     face_index_stack.pop_front();
                     if (!pop_state())
                         std::cerr << "Empty pop" << std::endl;
+                    break;
+                }
+                case '{':
+                {
+                    starting_face_id = former_index;
+                    break;
+                }
+                case '}':
+                {
+                    if (starting_face_id.has_value())
+                        add_surface_to_faces(faces, starting_face_id.value(), former_index);
+
+                    starting_face_id = std::nullopt;
                     break;
                 }
                 default:
