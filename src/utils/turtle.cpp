@@ -91,6 +91,21 @@ namespace
             return v.y;
         return v.z;
     }
+
+    void add_surface_to_faces(std::vector<std::vector<size_t>> &faces, size_t start, size_t end)
+    {
+        if (start >= end)
+        {
+            std::cerr << "Empty or negative (??) surface" << std::endl;
+            return;
+        }
+
+        std::vector<size_t> face;
+        for (; start <= end; start++)
+            face.emplace_back(start);
+
+        faces.emplace_back(face);
+    }
 }
 
 std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::string &ignore,
@@ -103,6 +118,7 @@ std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::st
     std::deque<size_t> face_index_stack;
     size_t former_index = 1;
     size_t index = 2;
+    std::optional<size_t> starting_face_id = std::nullopt;
     for (size_t i = 0; i < sentence.get_modules().size(); i++)
     {
             core::Module mod = sentence.get_modules()[i];
@@ -154,12 +170,17 @@ std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::st
                 }
                 case '[':
                 {
+                    starting_face_id = former_index;
                     face_index_stack.push_front(former_index);
                     push_state();
                     break;
                 }
                 case ']':
                 {
+                    if (starting_face_id.has_value())
+                        add_surface_to_faces(faces, starting_face_id.value(), former_index);
+
+                    starting_face_id = std::nullopt;
                     former_index = face_index_stack.front();
                     face_index_stack.pop_front();
                     if (!pop_state())
@@ -213,6 +234,19 @@ void Turtle3::to_cylinder(const double &radius, const size_t &discretisation,
     size_t new_y = 1;
     for (const auto &face : faces)
     {
+        // On a complexer form: e.g. a leaf
+        if (face.size() != 2)
+        {
+            std::vector<size_t> new_face;
+            for (const auto &pt : face)
+            {
+                new_pts.emplace_back(pts[pt - 1]);
+                new_face.emplace_back(new_y++);
+            }
+            new_faces.emplace_back(new_face);
+            continue;
+        }
+
         size_t i1 = face[0];
         size_t i2 = face[1];
         Vector3 v1 = pts[i1 - 1];
