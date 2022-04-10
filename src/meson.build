@@ -12,6 +12,7 @@ libcore = static_library('core', core, include_directories: includes)
 utils = files (
   'utils/drawer2D.cpp',
   'utils/turtle.cpp',
+  'utils/material.cpp'
   )
 
 libutils = static_library('utils', utils, dependencies: opencvdep, include_directories: includes)

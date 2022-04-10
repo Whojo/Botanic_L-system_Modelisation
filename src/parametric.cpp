@@ -1,4 +1,5 @@
 #include <iostream>
+#include <optional>
 
 #include "core/l_system.hpp"
 #include "utils/turtle.hpp"
@@ -280,7 +281,7 @@ int main() {
     std::vector<double> thicknesses;
     auto pts = turtle.compute(trunc, "'!{ASL}", faces, thicknesses);
     turtle.to_cylinder(0.1, 8, pts, faces, thicknesses);
-    turtle.create_obj_file("output/3d/decrement_test.obj", pts, faces);
+    turtle.create_obj_file("output/3d/decrement_test.obj", pts, faces, std::nullopt);
 
     //turtle(drawer, trunc, pi / 15, length, [](const char) -> Scalar {return {1, 6, 15};}, 90, 0.4, 0.4);
     //drawer.write_img("output/parametric/g_example.png");

@@ -115,9 +115,9 @@ namespace
 std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::string &ignore,
             std::vector<std::vector<size_t>> &faces,
             std::vector<double> &thicknesses,
-            const LengthController &length,
-            const Palette &palette,
-            const double &thickness)
+            //const std::vector<Material> &materials,
+            double thickness,
+            const LengthController &length)
 {
     std::vector<Vector3> points{ state.position };
     std::deque<size_t> face_index_stack;
@@ -200,6 +200,9 @@ std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::st
                     starting_face_id = std::nullopt;
                     break;
                 }
+                case '!':
+                    thickness *= 0.80;
+                    break;
                 default:
                 {
                     if (ignore.find(mod.letter) != std::string::npos)
@@ -221,19 +224,68 @@ std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::st
 
 void Turtle3::create_obj_file(const std::string &filename,
                               const std::vector<Vector3> &pts,
-                              const std::vector<std::vector<size_t>> &faces)
+                              const std::vector<std::vector<size_t>> &faces,
+                              const std::optional<std::vector<Material>> &o_materials)
 {
     std::ofstream os(filename.c_str());
     if (os)
     {
-        for (const Vector3 &pt : pts)
-            os << "v " << std::setprecision(7) << pt.x << " " << pt.y << " " << pt.z << std::endl; 
-        for (const std::vector<size_t> face : faces)
+        if (o_materials.has_value())
         {
-            os << "f";
-            for (const size_t vector_index : face)
-                os << " " << vector_index;
-            os << std::endl;
+            std::vector<Material> materials = o_materials.value();
+            size_t mat_size = materials.size();
+            std::cout << "has value | mat.size = " << mat_size << std::endl;
+            if (mat_size > 0)
+            {
+                os << "mtllib";
+                for (const auto &mat : materials)
+                    os << " " << mat.name << ".mtl";
+                os << std::endl;
+            }
+            for (const Vector3 &pt : pts)
+                os << "v " << std::setprecision(7) << pt.x << " " << pt.y << " " << pt.z << std::endl; 
+            std::vector<std::vector<size_t>> leaf_faces;
+            std::vector<std::vector<size_t>> trunc_faces;
+            for (const std::vector<size_t> face : faces)
+            {
+                if (face.size() > 4)
+                    leaf_faces.emplace_back(face);
+                else
+                    trunc_faces.emplace_back(face);
+            }
+            if (mat_size > 0)
+            {
+                os << "usemtl " << materials[mat_size - 1].name << std::endl;
+                std::cout << "trunc_faces -> " << trunc_faces.size() << std::endl;
+                for (const std::vector<size_t> face : trunc_faces)
+                {
+                    os << "f";
+                    for (const size_t vector_index : face)
+                        os << " " << vector_index;
+                    os << std::endl;
+                }
+            }
+            os << "usemtl " << materials[0].name << std::endl;
+            std::cout << "leaf_faces -> " << leaf_faces.size() << std::endl;
+            for (const std::vector<size_t> face : leaf_faces)
+            {
+                os << "f";
+                for (const size_t vector_index : face)
+                    os << " " << vector_index;
+                os << std::endl;
+            }
+        }
+        else
+        {
+            for (const Vector3 &pt : pts)
+                os << "v " << std::setprecision(7) << pt.x << " " << pt.y << " " << pt.z << std::endl; 
+            for (const std::vector<size_t> face : faces)
+            {
+                os << "f";
+                for (const size_t vector_index : face)
+                    os << " " << vector_index;
+                os << std::endl;
+            }
         }
     }
     else

@@ -9,6 +9,7 @@
 
 #include "core/state.hpp"
 #include "utils/drawer2D.hpp"
+#include "utils/material.hpp"
 #include "utils/vector3.hpp"
 
 using namespace cv;
@@ -41,7 +42,8 @@ public:
 
     void create_obj_file(const std::string &filename,
                          const std::vector<Vector3> &pts,
-                         const std::vector<std::vector<size_t>> &faces);
+                         const std::vector<std::vector<size_t>> &faces,
+                         const std::optional<std::vector<Material>> &materials);
     // convert edges to cylinder
     void to_cylinder(const double &radius, const size_t &discretisation,
                      std::vector<Vector3> &pts,
@@ -50,9 +52,9 @@ public:
     std::vector<Vector3> compute(const core::State &sentence, const std::string &ignore,
             std::vector<std::vector<size_t>> &faces,
             std::vector<double> &thicknesses,
-            const LengthController &length = [](const char) -> double {return 1;},
-            const Palette &palette =  [](const char) -> Scalar {return {0, 0, 0};},
-            const double &thickness = 1);
+            //const std::vector<Material> &materials,
+            double thickness = 1,
+            const LengthController &length = [](const char) -> double {return 1;});
 
 private:
     double fixed_angle; // used for non-parametric l-systems

@@ -1,4 +1,5 @@
 #include "utils/turtle.hpp"
+#include "utils/material.hpp"
 #include "core/l_system.hpp"
 
 
@@ -118,13 +119,23 @@ int main()
     // turtle.create_obj_file("output/3d/test.obj", pts_test, faces);
 
 
+    // double thickness = 20;
+    // core::State axiom_bush = std::vector<core::Module>{{'A', {1, thickness}}};
     std::string axiom_bush = "A";
     std::vector<core::Rule> productions_bush = {
       core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
         -> std::optional<core::State> {
             if ('A' != pred_.letter)
                 return std::nullopt;
+            // const auto t = pred_.params[1]; // Thickness
             return core::State{"[&FL!A]/////'[&FL!A]///////'[&FL!A]"};
+            // return std::vector<core::Module>{
+            //         {'[', {}},{'&', {}},{'F', {}},{'L', {}},{'A', {1.0,t * 0.75f}},{']', {}},
+            //         {'/', {}},{'/', {}},{'/', {}},{'/', {}},{'/', {}},
+            //         {'[', {}},{'&', {}},{'F', {}},{'L', {}},{'A', {1.0,t * 0.75f}},{']', {}},
+            //         {'/', {}},{'/', {}},{'/', {}},{'/', {}},{'/'},{'/'},{'/'},
+            //         {'[', {}},{'&', {}},{'F', {}},{'L', {}},{'A', {1.0,t * 0.75f}},{']', {}},
+            //         };
       }},
       core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
         -> std::optional<core::State> {
@@ -147,12 +158,19 @@ int main()
     };
     core::LSystem lsys_bush{ axiom_bush, productions_bush };
     auto bush = lsys_bush.generate(7);
+
+    Material mat_leaf = Material("green", {0, 1.0, 0});
+    Material mat_trunc = Material("brown", {0.5, 0.2, 0});
+    mat_leaf.write_mtl("output/3d/");
+    mat_trunc.write_mtl("output/3d/");
+
     Turtle3 turtle_bush(pi / 8);
     std::vector<std::vector<size_t>> faces_bush;
     std::vector<double> thicknesses;
+    // auto pts_bush = turtle_bush.compute(bush, "'!{ASL}", faces_bush, thicknesses, 3);
     auto pts_bush = turtle_bush.compute(bush, "'!{ASL}", faces_bush, thicknesses);
-    turtle_bush.to_cylinder(0.1, 8, pts_bush, faces_bush, thicknesses);
-    turtle_bush.create_obj_file("output/3d/bush.obj", pts_bush, faces_bush);
+    turtle_bush.to_cylinder(0.1, 2, pts_bush, faces_bush, thicknesses);
+    turtle_bush.create_obj_file("output/3d/bush.obj", pts_bush, faces_bush, std::vector<Material>{mat_leaf, mat_trunc});
 
     // std::string axiom_param{"A"};
     // std::vector<core::Rule> productions_param = {
