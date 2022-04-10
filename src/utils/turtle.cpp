@@ -114,9 +114,10 @@ namespace
 
 std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::string &ignore,
             std::vector<std::vector<size_t>> &faces,
+            std::vector<double> &thicknesses,
             const LengthController &length,
             const Palette &palette,
-            const int &thickness)
+            const double &thickness)
 {
     std::vector<Vector3> points{ state.position };
     std::deque<size_t> face_index_stack;
@@ -204,9 +205,11 @@ std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::st
                     if (ignore.find(mod.letter) != std::string::npos)
                         break;
                     double len = (mod.params.size()) ? mod.params[0] : length(mod.letter);
+                    double t = (mod.params.size() >= 2) ? mod.params[1] : thickness;
                     state.position = state.position + (state.rotation[0] * len);
                     points.emplace_back(state.position);
                     faces.emplace_back(std::vector<size_t>{former_index, index});
+                    thicknesses.emplace_back(t);
                     former_index = index;
                     index += 1;
                     break;
@@ -239,11 +242,13 @@ void Turtle3::create_obj_file(const std::string &filename,
 
 void Turtle3::to_cylinder(const double &radius, const size_t &discretisation,
                           std::vector<Vector3> &pts,
-                          std::vector<std::vector<size_t>> &faces)
+                          std::vector<std::vector<size_t>> &faces,
+                          std::vector<double> &thicknesses)
 {
     std::vector<Vector3> new_pts;
     std::vector<std::vector<size_t>> new_faces;
     size_t new_y = 1;
+    size_t index = 0;
     for (const auto &face : faces)
     {
         // On a complexer form: e.g. a leaf
@@ -259,6 +264,7 @@ void Turtle3::to_cylinder(const double &radius, const size_t &discretisation,
             continue;
         }
 
+        double edge_thickness = thicknesses[index++];
         size_t i1 = face[0];
         size_t i2 = face[1];
         Vector3 v1 = pts[i1 - 1];
@@ -271,16 +277,16 @@ void Turtle3::to_cylinder(const double &radius, const size_t &discretisation,
             dir.cross(pdir).normalize(),
         };
         double angle = pi / discretisation;
-        Vector3 former1 = v1 + (rot[2] * radius);
-        Vector3 former2 = v2 + (rot[2] * radius);
+        Vector3 former1 = v1 + (rot[2] * radius * edge_thickness);
+        Vector3 former2 = v2 + (rot[2] * radius * edge_thickness);
         new_pts.emplace_back(former1);
         new_pts.emplace_back(former2);
         size_t y = new_y;
         for (size_t i = 1; i < discretisation * 2; i++, y+=2)
         {
             rotate(rot, RH(angle));
-            Vector3 new1 = v1 + (rot[2] * radius);
-            Vector3 new2 = v2 + (rot[2] * radius);
+            Vector3 new1 = v1 + (rot[2] * radius * edge_thickness);
+            Vector3 new2 = v2 + (rot[2] * radius * edge_thickness);
             new_pts.emplace_back(new1);
             new_pts.emplace_back(new2);
             new_faces.emplace_back(std::vector<size_t>{y, y+1, y+3, y+2});

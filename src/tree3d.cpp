@@ -149,8 +149,9 @@ int main()
     auto bush = lsys_bush.generate(7);
     Turtle3 turtle_bush(pi / 8);
     std::vector<std::vector<size_t>> faces_bush;
-    auto pts_bush = turtle_bush.compute(bush, "'!{ASL}", faces_bush);
-    turtle_bush.to_cylinder(0.1, 8, pts_bush, faces_bush);
+    std::vector<double> thicknesses;
+    auto pts_bush = turtle_bush.compute(bush, "'!{ASL}", faces_bush, thicknesses);
+    turtle_bush.to_cylinder(0.1, 8, pts_bush, faces_bush, thicknesses);
     turtle_bush.create_obj_file("output/3d/bush.obj", pts_bush, faces_bush);
 
     // std::string axiom_param{"A"};

@@ -43,13 +43,16 @@ public:
                          const std::vector<Vector3> &pts,
                          const std::vector<std::vector<size_t>> &faces);
     // convert edges to cylinder
-    void to_cylinder(const double &radius, const size_t &discretisation,std::vector<Vector3> &pts,
-                     std::vector<std::vector<size_t>> &faces);
+    void to_cylinder(const double &radius, const size_t &discretisation,
+                     std::vector<Vector3> &pts,
+                     std::vector<std::vector<size_t>> &faces,
+                     std::vector<double> &thicknesses);
     std::vector<Vector3> compute(const core::State &sentence, const std::string &ignore,
             std::vector<std::vector<size_t>> &faces,
+            std::vector<double> &thicknesses,
             const LengthController &length = [](const char) -> double {return 1;},
             const Palette &palette =  [](const char) -> Scalar {return {0, 0, 0};},
-            const int &thickness = 2);
+            const double &thickness = 1);
 
 private:
     double fixed_angle; // used for non-parametric l-systems
