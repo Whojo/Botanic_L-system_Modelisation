@@ -4,5 +4,9 @@
 meson setup --buildtype=release build<br/>
 meson compile -C build
 
+### Pour debug
+meson setup --buildtype=debug debug<br/>
+meson compile -C debug
+
 ### Pour executer
 build/<nom de l'executable>
