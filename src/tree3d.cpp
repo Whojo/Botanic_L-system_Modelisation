@@ -7,94 +7,102 @@ using namespace std::string_literals;
 
 int main()
 {
-    // std::string axiom = "P";
+    std::string axiom = "P";
 
-    // std::vector<core::Rule> productions_param = {
-    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-    //     -> std::optional<core::State> {
-    //         if ('P' != pred_.letter)
-    //             return std::nullopt;
-    //         return core::State{{
-    //             core::Module{'I'}, '+',
-    //             '[', 'P', '+', 'F', ']', '-', '-', '/', '/',
-    //             '[', '-', '-', 'L', ']', 'I', '[', '+', '+', 'L' ,']' ,'-',
-    //             '[', 'P', 'F', ']', '+', '+', 'P', 'F',
-    //       }};
-    //   }},
-    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-    //     -> std::optional<core::State> {
-    //         if ('I' != pred_.letter)
-    //             return std::nullopt;
-    //         return core::State{{
-    //             core::Module{'F'},
-    //             'S','[','/','/','&','&', 'L', ']',
-    //             '[','/','/','^','^', 'L', ']', 'F', 'S',
-    //       }};
-    //   }},
-    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-    //     -> std::optional<core::State> {
-    //         if ('S' != pred_.letter)
-    //             return std::nullopt;
-    //         return core::State{{
-    //             core::Module{'S'},
-    //             core::Module{'F'},
-    //             core::Module{'S'},
-    //       }};
-    //   }},
-    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-    //     -> std::optional<core::State> {
-    //         if ('L' != pred_.letter)
-    //             return std::nullopt;
-    //         return core::State{{
-    //             core::Module{'['},
-    //             '+', 'f', '-', 'f', 'f', '-', 'f', '+', '|',
-    //             '+', 'f', '-', 'f', 'f', '-', 'f',
-    //             ']',
-    //       }};
-    //   }},
-    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-    //     -> std::optional<core::State> {
-    //         if ('F' != pred_.letter)
-    //             return std::nullopt;
-    //         return core::State{{
-    //             core::Module{'['},
-    //             '&', '&', '&', 'G', '/',
-    //             'W', '/', '/', '/', '/',
-    //             'W', '/', '/', '/', '/',
-    //             'W', '/', '/', '/', '/',
-    //             'W', '/', '/', '/', '/', 'W',
-    //             core::Module{']'},
-    //       }};
-    //   }},
-    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-    //     -> std::optional<core::State> {
-    //         if ('G' != pred_.letter)
-    //             return std::nullopt;
-    //         return core::State{{
-    //             core::Module{'F'},
-    //             core::Module{'F'},
-    //       }};
-    //   }},
-    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-    //     -> std::optional<core::State> {
-    //         if ('W' != pred_.letter)
-    //             return std::nullopt;
-    //         return core::State{{
-    //             core::Module{'['},
-    //             '^', 'F', ']',
-    //             '[', '&', '&', '&', '&',
-    //             '-', 'f', '+', 'f', '|', '-','f', '+', 'f',
-    //             core::Module{']'},
-    //       }};
-    //   }},
-    // };
-    // core::LSystem lsys_param{ axiom, productions_param };
-    // auto generated = lsys_param.generate(5);
-    // Turtle3 turtle_flower(pi / 10);
-    // std::vector<std::vector<size_t>> faces_flower;
-    // auto pts = turtle_flower.compute(generated, "PISLGW", faces_flower);
-    // turtle_flower.to_cylinder(0.1, 8, pts, faces_flower);
-    // turtle_flower.create_obj_file("output/3d/flower.obj", pts, faces_flower);
+    std::vector<core::Rule> productions_param = {
+      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('P' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+                core::Module{'I'}, '+',
+                '[', 'P', '+', 'H', ']', '-', '-', '/', '/',
+                '[', '-', '-', 'L', ']', 'I', '[', '+', '+', 'L' ,']' ,'-',
+                '[', 'P', 'H', ']', '+', '+', 'P', 'H',
+          }};
+      }},
+      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('I' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+                core::Module{'F'},
+                'S','[','/','/','&','&', 'L', ']',
+                '[','/','/','^','^', 'L', ']', 'F', 'S',
+          }};
+      }},
+      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('S' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+                core::Module{'S'},
+                core::Module{'F'},
+                core::Module{'S'},
+          }};
+      }},
+      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('L' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+                core::Module{'['},
+                '{', '+', 'f', '-', 'f', 'f', '-', 'f', '+', '|',
+                '+', 'f', '-', 'f', 'f', '-', 'f',
+                '}', ']',
+          }};
+      }},
+      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('H' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+                core::Module{'['},
+                '&', '&', '&', 'G', '/',
+                'W', '/', '/', '/', '/',
+                'W', '/', '/', '/', '/',
+                'W', '/', '/', '/', '/',
+                'W', '/', '/', '/', '/', 'W',
+                core::Module{']'},
+          }};
+      }},
+      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('G' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+                core::Module{'F'},
+                core::Module{'F'},
+          }};
+      }},
+      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('W' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+                core::Module{'['},
+                '^', 'F', ']',
+                '[', '{', '&', '&', '&', '&',
+                '-', 'f', '+', 'f', '|', '-','f', '+', 'f',
+                '}', core::Module{']'},
+          }};
+      }},
+    };
+
+    Material mat_leaf = Material("green", {0, 1.0, 0});
+    Material mat_trunc = Material("brown", {0.5, 0.2, 0});
+    mat_leaf.write_mtl("output/3d/");
+    mat_trunc.write_mtl("output/3d/");
+
+    core::LSystem lsys_param{axiom, productions_param };
+    auto generated = lsys_param.generate(7);
+    Turtle3 turtle_flower(pi / 10);
+    std::vector<std::vector<size_t>> faces_flower;
+    std::vector<double> thicknesses_flower;
+    auto pts = turtle_flower.compute(generated, "PISLGW", faces_flower, thicknesses_flower);
+    // turtle_flower.to_cylinder(0.1, 8, pts, faces_flower, thicknesses_flower);
+    turtle_flower.create_obj_file("output/3d/flower.obj", pts, faces_flower,
+                                  std::vector<Material>{mat_leaf, mat_trunc});
 
     // std::string axiom_test = "F";
 
@@ -119,58 +127,90 @@ int main()
     // turtle.create_obj_file("output/3d/test.obj", pts_test, faces);
 
 
+    // std::string axiom_bush = "A";
+    // std::vector<core::Rule> productions_bush = {
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('A' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{"[&FL!A]/////'[&FL!A]///////'[&FL!A]"};
+    //   }},
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('F' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{"S/////F"};
+    //   }},
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('S' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{"FL"};
+    //   }},
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('L' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{"['''^^{-f+f+f-|-f+f+f}]"};
+    //   }},
+    // };
+    // core::LSystem lsys{ axiom_test, productions };
+    // auto state = lsys.generate(1);
+    // // std::cout << state.get_letters() << std::endl;
+    // // Turtle3 turtle(pi / 4);
+    // Turtle3 turtle(pi / 8);
+    // std::vector<std::vector<size_t>> faces;
+    // auto pts_test = turtle.compute(state, "", faces);
+    // turtle.create_obj_file("output/3d/test.obj", pts_test, faces);
+
+
     // double thickness = 20;
     // core::State axiom_bush = std::vector<core::Module>{{'A', {1, thickness}}};
-    std::string axiom_bush = "A";
-    std::vector<core::Rule> productions_bush = {
-      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-        -> std::optional<core::State> {
-            if ('A' != pred_.letter)
-                return std::nullopt;
-            // const auto t = pred_.params[1]; // Thickness
-            return core::State{"[&FL!A]/////'[&FL!A]///////'[&FL!A]"};
-            // return std::vector<core::Module>{
-            //         {'[', {}},{'&', {}},{'F', {}},{'L', {}},{'A', {1.0,t * 0.75f}},{']', {}},
-            //         {'/', {}},{'/', {}},{'/', {}},{'/', {}},{'/', {}},
-            //         {'[', {}},{'&', {}},{'F', {}},{'L', {}},{'A', {1.0,t * 0.75f}},{']', {}},
-            //         {'/', {}},{'/', {}},{'/', {}},{'/', {}},{'/'},{'/'},{'/'},
-            //         {'[', {}},{'&', {}},{'F', {}},{'L', {}},{'A', {1.0,t * 0.75f}},{']', {}},
-            //         };
-      }},
-      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-        -> std::optional<core::State> {
-            if ('F' != pred_.letter)
-                return std::nullopt;
-            return core::State{"S/////F"};
-      }},
-      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-        -> std::optional<core::State> {
-            if ('S' != pred_.letter)
-                return std::nullopt;
-            return core::State{"FL"};
-      }},
-      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-        -> std::optional<core::State> {
-            if ('L' != pred_.letter)
-                return std::nullopt;
-            return core::State{"['''^^{-f+f+f-|-f+f+f}]"};
-      }},
-    };
-    core::LSystem lsys_bush{ axiom_bush, productions_bush };
-    auto bush = lsys_bush.generate(7);
+    // std::string axiom_bush = "A";
+    // std::vector<core::Rule> productions_bush = {
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('A' != pred_.letter)
+    //             return std::nullopt;
+    //         // const auto t = pred_.params[1]; // Thickness
+    //         return core::State{"[&FL!A]/////'[&FL!A]///////'[&FL!A]"};
+    //         // return std::vector<core::Module>{
+    //         //         {'[', {}},{'&', {}},{'F', {}},{'L', {}},{'A', {1.0,t * 0.75f}},{']', {}},
+    //         //         {'/', {}},{'/', {}},{'/', {}},{'/', {}},{'/', {}},
+    //         //         {'[', {}},{'&', {}},{'F', {}},{'L', {}},{'A', {1.0,t * 0.75f}},{']', {}},
+    //         //         {'/', {}},{'/', {}},{'/', {}},{'/', {}},{'/'},{'/'},{'/'},
+    //         //         {'[', {}},{'&', {}},{'F', {}},{'L', {}},{'A', {1.0,t * 0.75f}},{']', {}},
+    //         //         };
+    //   }},
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('F' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{"S/////F"};
+    //   }},
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('S' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{"FL"};
+    //   }},
+    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    //     -> std::optional<core::State> {
+    //         if ('L' != pred_.letter)
+    //             return std::nullopt;
+    //         return core::State{"['''^^{-f+f+f-|-f+f+f}]"};
+    //   }},
+    // };
+    // core::LSystem lsys_bush{ axiom_bush, productions_bush };
+    // auto bush = lsys_bush.generate(7);
 
-    Material mat_leaf = Material("green", {0, 1.0, 0});
-    Material mat_trunc = Material("brown", {0.5, 0.2, 0});
-    mat_leaf.write_mtl("output/3d/");
-    mat_trunc.write_mtl("output/3d/");
-
-    Turtle3 turtle_bush(pi / 8);
-    std::vector<std::vector<size_t>> faces_bush;
-    std::vector<double> thicknesses;
-    // auto pts_bush = turtle_bush.compute(bush, "'!{ASL}", faces_bush, thicknesses, 3);
-    auto pts_bush = turtle_bush.compute(bush, "'!{ASL}", faces_bush, thicknesses);
-    turtle_bush.to_cylinder(0.1, 2, pts_bush, faces_bush, thicknesses);
-    turtle_bush.create_obj_file("output/3d/bush.obj", pts_bush, faces_bush, std::vector<Material>{mat_leaf, mat_trunc});
+    // Turtle3 turtle_bush(pi / 8);
+    // std::vector<std::vector<size_t>> faces_bush;
+    // std::vector<double> thicknesses;
+    // // auto pts_bush = turtle_bush.compute(bush, "'!{ASL}", faces_bush, thicknesses, 3);
+    // auto pts_bush = turtle_bush.compute(bush, "'!{ASL}", faces_bush, thicknesses);
+    // turtle_bush.to_cylinder(0.1, 2, pts_bush, faces_bush, thicknesses);
+    // turtle_bush.create_obj_file("output/3d/bush.obj", pts_bush, faces_bush, std::vector<Material>{mat_leaf, mat_trunc});
 
     // std::string axiom_param{"A"};
     // std::vector<core::Rule> productions_param = {

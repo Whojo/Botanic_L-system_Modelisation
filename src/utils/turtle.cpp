@@ -92,7 +92,8 @@ namespace
         return v.z;
     }
 
-    void add_surface_to_faces(std::vector<std::vector<size_t>> &faces, size_t start, size_t end)
+    void add_surface_to_faces(std::vector<std::vector<size_t>> &faces,
+                              const size_t start, const size_t end)
     {
         if (start >= end)
         {
@@ -100,11 +101,12 @@ namespace
             return;
         }
 
-        std::vector<size_t> face;
-        face.emplace_back(start++);
-        for (; start <= end; start++)
+        auto cur = end;
+        std::vector<size_t> face{cur};
+        while (start < cur)
         {
-            face.emplace_back(start);
+            cur = faces.back()[0];
+            face.emplace_back(cur);
             faces.pop_back(); // Removed edges of the surface
         }
 
