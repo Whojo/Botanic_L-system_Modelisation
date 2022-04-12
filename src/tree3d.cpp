@@ -91,8 +91,10 @@ int main()
 
     Material mat_leaf = Material("green", {0, 1.0, 0});
     Material mat_trunc = Material("brown", {0.5, 0.2, 0});
+    Material mat_petal = Material("white", {1, 1, 1});
     mat_leaf.write_mtl("output/3d/");
     mat_trunc.write_mtl("output/3d/");
+    mat_petal.write_mtl("output/3d/");
 
     core::LSystem lsys_param{axiom, productions_param };
     auto generated = lsys_param.generate(7);
@@ -100,9 +102,9 @@ int main()
     std::vector<std::vector<size_t>> faces_flower;
     std::vector<double> thicknesses_flower;
     auto pts = turtle_flower.compute(generated, "PISLGW", faces_flower, thicknesses_flower);
-    // turtle_flower.to_cylinder(0.1, 8, pts, faces_flower, thicknesses_flower);
+    turtle_flower.to_cylinder(0.1, 8, pts, faces_flower, thicknesses_flower);
     turtle_flower.create_obj_file("output/3d/flower.obj", pts, faces_flower,
-                                  std::vector<Material>{mat_leaf, mat_trunc});
+                                  std::vector<Material>{mat_leaf, mat_petal, mat_trunc});
 
     // std::string axiom_test = "F";
 

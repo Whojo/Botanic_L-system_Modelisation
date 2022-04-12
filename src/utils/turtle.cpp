@@ -248,8 +248,15 @@ void Turtle3::create_obj_file(const std::string &filename,
                 os << "v " << std::setprecision(7) << pt.x << " " << pt.y << " " << pt.z << std::endl; 
             std::vector<std::vector<size_t>> leaf_faces;
             std::vector<std::vector<size_t>> trunc_faces;
+            std::vector<std::vector<size_t>> petal_faces;
             for (const std::vector<size_t> face : faces)
             {
+                if (face.size() == 5)
+                {
+                    petal_faces.emplace_back(face);
+                    continue;
+                }
+
                 if (face.size() > 4)
                     leaf_faces.emplace_back(face);
                 else
@@ -260,6 +267,18 @@ void Turtle3::create_obj_file(const std::string &filename,
                 os << "usemtl " << materials[mat_size - 1].name << std::endl;
                 std::cout << "trunc_faces -> " << trunc_faces.size() << std::endl;
                 for (const std::vector<size_t> face : trunc_faces)
+                {
+                    os << "f";
+                    for (const size_t vector_index : face)
+                        os << " " << vector_index;
+                    os << std::endl;
+                }
+            }
+            if (mat_size == 3)
+            {
+                os << "usemtl " << materials[1].name << std::endl;
+                std::cout << "petal_faces -> " << petal_faces.size() << std::endl;
+                for (const std::vector<size_t> face : petal_faces)
                 {
                     os << "f";
                     for (const size_t vector_index : face)
@@ -314,6 +333,10 @@ void Turtle3::to_cylinder(const double &radius, const size_t &discretisation,
                 new_pts.emplace_back(pts[pt - 1]);
                 new_face.emplace_back(new_y++);
             }
+
+            if (face.size() == 4) // "Tricks for petals"
+                new_face.emplace_back(new_y);
+
             new_faces.emplace_back(new_face);
             continue;
         }
