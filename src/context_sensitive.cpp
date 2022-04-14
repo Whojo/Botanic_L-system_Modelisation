@@ -40,22 +40,24 @@ int main()
     int base = height - 20;
     Point2d starting(width / 2.f, base); // Starting Point of the line
 
-    LengthController length{[](char) {return 4;}};
+    LengthController length{[](char) {return 1;}};
     Drawer drawer = Drawer(height, width, starting);
     length = [](char) {
       return 50;
     };
 
     std::string axiom_cont_test = "F";
+    std::vector<core::Rule> productions = {
+        core::Rule{'F', "FF"s},
+    };
     std::vector<core::Rule> productions_cont_test = {
-        core::Rule{'F', "FF"s, [](const core::State &left, const core::State &right) {return true;}},
         core::Rule{'F', "F[+F]"s, [](const core::State &left, const core::State &right) {
             return left.get_letters().ends_with("FF");
             }
         },
   };
-    core::LSystem lsys_cont_test{ axiom_cont_test, {}, productions_cont_test, "+[]" };
-    auto tree_cont = lsys_cont_test.generate(5);
+    core::LSystem lsys_cont_test{ axiom_cont_test, productions, productions_cont_test, "+[]" };
+    auto tree_cont = lsys_cont_test.generate(7);
     turtle2D(drawer, tree_cont.get_letters(), pi / 8, length, [](char) -> Scalar {return {2, 4, 33};}, 2);
     drawer.write_img("output/context_sensitive/left_example.png");
 

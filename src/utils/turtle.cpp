@@ -202,9 +202,9 @@ std::vector<Vector3> Turtle3::compute(const core::State &sentence, const std::st
                     starting_face_id = std::nullopt;
                     break;
                 }
-                case '!':
-                    thickness *= 0.80;
-                    break;
+                // case '!':
+                //     thickness *= 0.80;
+                //     break;
                 default:
                 {
                     if (ignore.find(mod.letter) != std::string::npos)

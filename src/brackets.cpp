@@ -80,30 +80,41 @@ int main()
 
     Palette palette_d = [](const char c) -> Scalar {
       if (c == 'H')
-        return {28,116,72}; // Green
-      return {12,47,55}; // Brown
+        return {50,205,50}; // Green
+        // return {28,116,72}; // Green
+      return {45,82,160}; // Brown
+      // return {12,47,55}; // Brown
+        // return {0,0,0};
     };
     turtle2D(drawer, generated_d.get_letters(), pi9, length, palette_d);
     drawer.write_img("output/brackets/d_example.png");
 
   //   /* ----------------- */
-
-    drawer = Drawer(height, width, starting);
+    
     std::string axiom_e = "X";
     std::vector<core::Rule> productions_e = {
-      core::Rule{ 'X', "H[+X][-X]HX"s},
-      core::Rule{ 'H', "FF"s},
-      core::Rule{ 'F', "FF"s},
+        core::Rule{ 'X', "H[+X][-X]HX"s},
+        core::Rule{ 'H', "FF"s},
+        core::Rule{ 'F', "FF"s},
     };
-
     core::LSystem lsys_e{ axiom_e, productions_e };
 
-    auto generated_e = lsys_e.generate(7);
-    turtle2D(drawer, generated_e.get_letters(), pi7, length, palette_d);
-    drawer.write_img("output/brackets/e_example.png");
+    for (int i = 0; i < 8; i++)
+    {
+        length = [=](char) {
+            return 512 / (std::pow(2, i));
+        };
+        drawer = Drawer(height, width, starting);
+        auto generated_e = lsys_e.generate(i);
+        turtle2D(drawer, generated_e.get_letters(), pi7, length, palette_d);
+        drawer.write_img("output/brackets/e" + std::to_string(i) + "_example.png");
+    }
 
     // /* ----------------- */
 
+    length = [](char) {
+      return 10;
+    };
     drawer = Drawer(height, width, starting);
     std::string axiom_f = "X";
     std::vector<core::Rule> productions_f = {

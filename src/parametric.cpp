@@ -65,7 +65,7 @@ void turtle(Drawer &drawer, core::State sentence, double angle,
 // respectively the default angle and length
 // e.g. an `angle_chaos` = 0.20 will allow a 20% variation of the angle
 // both positively and negatively
-void turtle(Drawer &drawer, core::State sentence, double angle,
+void chaos_turtle(Drawer &drawer, core::State sentence, double angle,
             LengthController length_controller,
             Palette palette = [](const char) -> Scalar { return {0, 0, 0};},
             const int thickness = 2,
@@ -107,22 +107,6 @@ void turtle(Drawer &drawer, core::State sentence, double angle,
 }
 
 int main() {
-    // std::string axiom_ = "b";
-    // std::vector<core::Rule> productions_ = {
-    //     core::Rule{'a', "ab"s},
-    //     core::Rule{'b', "a"s}
-    // };
-
-    // core::LSystem lsys{axiom_, productions_};
-
-    // const auto &generated_state = lsys.generate(5);
-
-    // std::cout << "Final result: ";
-    // for (const auto &mod : generated_state.get_modules())
-    //     std::cout << mod.letter;
-
-    // std::cout << std::endl;
-
     int height = 2000;
     int width = 2000;
 
@@ -132,41 +116,90 @@ int main() {
     LengthController length{[](char) {return 4;}};
     Drawer drawer = Drawer(height, width, starting);
 
-    // std::string axiom_param{"A"};
-    // std::vector<core::Rule> productions_param = {
-    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-    //     -> std::optional<core::State> {
-    //         if ('A' != pred_.letter)
-    //             return std::nullopt;
-    //         return core::State{{
-    //           core::Module{'F', {20}},
-    //           core::Module{'[', {}},
-    //           core::Module{'+', {}},
-    //           core::Module{'A', {}},
-    //           core::Module{']', {}},
-    //           core::Module{'[', {}},
-    //           core::Module{'-', {}},
-    //           core::Module{'A', {}},
-    //           core::Module{']', {}}
-    //       }};
-    //   }},
-    //   core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
-    // -> std::optional<core::State> {
-    //         if ('F' != pred_.letter)
-    //             return std::nullopt;
-    //         return core::State{{
-    //           core::Module{'F', {pred_.params[0] * 1.456}}
-    //       }};
-    //   }}
-    // };
+    std::string axiom_param{"A"};
+    std::vector<core::Rule> productions_param = {
+      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('A' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+              core::Module{'F', {20}},
+              core::Module{'[', {}},
+              core::Module{'+', {}},
+              core::Module{'A', {}},
+              core::Module{']', {}},
+              core::Module{'[', {}},
+              core::Module{'-', {}},
+              core::Module{'A', {}},
+              core::Module{']', {}}
+          }};
+      }},
+      core::Rule{[](const core::Module &pred_, const core::State &, const core::State &)
+    -> std::optional<core::State> {
+            if ('F' != pred_.letter)
+                return std::nullopt;
+            return core::State{{
+              core::Module{'F', {pred_.params[0] * 1.456}}
+          }};
+      }}
+    };
 
-    // core::LSystem lsys_param{ axiom_param, productions_param };
+    core::LSystem lsys_param{ axiom_param, productions_param };
 
-    // auto generated_param = lsys_param.generate(10);
+    auto generated_param = lsys_param.generate(10);
 
-    // double pi2 = pi / 2.1; // 85°
-    // turtle(drawer, generated_param, pi2, length);
-    // drawer.write_img("output/parametric/param_example.png");
+    double pi2 = pi / 2.1; // 85°
+    turtle(drawer, generated_param, pi2, length);
+    drawer.write_img("output/parametric/param_example.png");
+
+    drawer = Drawer(height, width, {100., base * 1.}, 0.);
+    // define //
+    double c = 1;
+    double p = 0.3;
+    double q = c - p;
+    double h = std::pow((p*q),0.5);
+    // define //
+
+    double x = 60;
+    double t = 0;
+    core::State axiom = std::vector<core::Module>{{'F', {x, t}}};
+    std::vector<core::Rule> productions_cs = {
+      core::Rule{[&](const core::Module &pred_, const core::State &, const core::State &)
+        -> std::optional<core::State> {
+            if ('F' != pred_.letter)
+                return std::nullopt;
+            if (0 == pred_.params[1])
+                return std::nullopt;
+            return core::State{{
+              core::Module{'F', {x * p, 2}},
+              core::Module{'+', {}},
+              core::Module{'F', {x*h, 1}},
+              core::Module{'-', {}},
+              core::Module{'-', {}},
+              core::Module{'F', {x*h, 1}},
+              core::Module{'+', {}},
+              core::Module{'F', {x * q, 0}},
+          }};
+      }},
+      core::Rule{[&](const core::Module &pred_, const core::State &, const core::State &)
+    -> std::optional<core::State> {
+            if ('F' != pred_.letter)
+                return std::nullopt;
+            if (pred_.params[1] > 0)
+                return std::nullopt;
+            return core::State{{
+              core::Module{'F', {x, t - 1}}
+          }};
+      }}
+    };
+
+    core::LSystem lsys{ axiom, {},productions_cs };
+
+    auto generated = lsys.generate(7);
+
+    turtle(drawer, generated, pi / 2.09, length);
+    drawer.write_img("output/parametric/forest_example.png");
+
 
     // drawer = Drawer("images/Background3.jpg", {5000, 2750});
     double l = 150;
@@ -281,7 +314,7 @@ int main() {
     std::vector<double> thicknesses;
     auto pts = turtle.compute(trunc, "'!{ASL}", faces, thicknesses);
     turtle.to_cylinder(0.1, 8, pts, faces, thicknesses);
-    turtle.create_obj_file("output/3d/decrement_test.obj", pts, faces, std::nullopt);
+    turtle.create_obj_file("output/3d/thickness_param.obj", pts, faces, std::nullopt);
 
     //turtle(drawer, trunc, pi / 15, length, [](const char) -> Scalar {return {1, 6, 15};}, 90, 0.4, 0.4);
     //drawer.write_img("output/parametric/g_example.png");

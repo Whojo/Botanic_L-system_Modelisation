@@ -27,18 +27,10 @@ int main()
     double pi8 = pi / 8; // 22.5°
     double pi9 = pi / 9; // 20°
 
-    drawer = Drawer(500, 1000, {620, 430});
-    std::string axiom_leaf = "HG";
     std::vector<core::Rule> productions_leaves = {
       core::Rule{'G',  "G+[+G-G-G]-[-G+G+G]"s},
       core::Rule{'H',  "H-[-H+H+H]+[+H-H-H]"s},
     };
-
-    core::LSystem lsys_leaves{ axiom_leaf, productions_leaves };
-    auto leaves = lsys_leaves.generate(4);
-
-    turtle2D(drawer, leaves.get_letters(), pi / 12, length, [](const char) -> Scalar {return {2, 4, 33};}, 1);
-    drawer.write_img("output/stochastic/g_leaves_right_example.png");
 
     // /* ----------------- */
 

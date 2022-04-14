@@ -15,6 +15,11 @@ Drawer::Drawer(int height, int width, cv::Point2d start)
     window = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
     state = State{ pi/2, start };
 }
+Drawer::Drawer(int height, int width, cv::Point2d start, double start_angle)
+{
+    window = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
+    state = State{ start_angle, start };
+}
 
 void Drawer::draw_line(cv::Scalar color, int thickness, double length)
 {

@@ -21,7 +21,7 @@ sources = core + utils
 fractals = files ('fractals.cpp')
 brackets = files ('brackets.cpp')
 stochastic = files ('stochastic.cpp')
-context_sensitive = files ('stochastic.cpp')
+context_sensitive = files ('context_sensitive.cpp')
 parametric = files ('parametric.cpp')
 tree3d = files ('tree3d.cpp')
 

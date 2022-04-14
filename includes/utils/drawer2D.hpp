@@ -23,6 +23,7 @@ class Drawer
 public:
     Drawer(const std::string background_img, cv::Point2d start);
     Drawer(int height, int width, cv::Point2d start);
+    Drawer(int height, int width, cv::Point2d start, double start_angle);
 
     // Draw a line based on the current state of the Drawer
     // The state is updated
